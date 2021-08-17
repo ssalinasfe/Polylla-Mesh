@@ -45,9 +45,12 @@ int Remove_BE2(int option, int *poly, int length_poly, int num_BE, int *triangle
         if (poly[x] == poly[y]){
             v_be= poly[(i+1) %length_poly];
             debug_print("Encontrado v_be %d %d %d\n", poly[x], v_be, poly[y]);
-            t1 = search_triangle_by_vertex_with_FrontierEdge_from_trivertex(v_be, triangles, adj, tnumber, trivertex);
-            //t1 = search_triangle_by_vertex_with_FrontierEdge(v_be, triangles, adj, tnumber);
-            v_other = optimice2_middle_edge(&t1, v_be, triangles, adj);
+
+            
+            //t1 = search_triangle_by_vertex_with_FrontierEdge_from_trivertex(v_be, triangles, adj, tnumber, trivertex);
+            t1 = search_triangle_by_vertex_with_FrontierEdge(v_be, triangles, adj, tnumber);
+            //v_other = optimice2_middle_edge(&t1, v_be, triangles, adj);
+            v_other = optimice2_middle_edge_no_memory(&t1, v_be, triangles, adj);
             if(v_other == -2){
                 fprintf(stderr, "Caso critico especial, no encuentra vertices para avanzar en la busqueda de eliminación de barries edge, pero es la primera iteración\n");
                 debug_print("v_be - v_other: %d - %d | t1 - t2: %d \n", v_be, v_other, t1);
@@ -328,7 +331,7 @@ int generate_polygon_from_BE(int i, int * poly, int * triangles, int * adj, doub
     return ind_poly;
 }
 
-//Remove_BE
+//Remove_BE, recursive with exponencial new memory
 int Remove_BE(int option, int *poly, int length_poly, int num_BE, int *triangles, int *adj, double *r, int tnumber, int *mesh, int i_mesh, int* trivertex){
 
     debug_msg("Removiendo barrier edge de "); debug_block(print_poly(poly, length_poly); );
@@ -548,7 +551,7 @@ int optimice2_middle_edge_no_memory(int *t_original, int v_be, int *triangles, i
     t_incident = t;
     adv = 0;
     origen = -1; 
-    int t_next, t_prev;
+    int t_next = -1, t_prev;
     while (1)
     {
         debug_print("%d %d %d\n", *t_original, t, origen) ;
@@ -561,21 +564,30 @@ int optimice2_middle_edge_no_memory(int *t_original, int v_be, int *triangles, i
     }
     debug_print("%d %d %d\n", *t_original, t, origen );
     //print_poly(t_incident, i);
+    if(adv == 1){
+        *t_original = t_incident;
+        //return search_prev_vertex_to_split(t_incident[0], v_be, -1, triangles, adj);
+        for(int j = 0; j < 3; j++){
+            if(triangles[3*t_incident + j] == v_be)
+                return triangles[3*t_incident + (j+1)%3];
+        }
+    }
     if(adv%2 == 0){ //if the triangles surrounding the BET are even 
-        adv = floor(adv/2 - 1);
-        t_prev = advance_i_adjacents_triangles_share_endpoint(adv,t_incident, -1, v_be, triangles, adj);
+        adv = adv/2 - 1;
+        origen = -1;
+        t_prev = advance_i_adjacents_triangles_share_endpoint(adv,t_incident, origen, v_be, triangles, adj);
         *t_original = t_prev;
         //Choose the edge in common with the two middle triangles   
-        t_next = get_adjacent_triangle_share_endpoint(t, t_prev, v_be, triangles, adj);
+        t_next = get_adjacent_triangle_share_endpoint(t_prev, origen, v_be, triangles, adj);
         debug_print("search_prev adv %d t_next %d v_be %d t_prev %d \n", adv, t_next, v_be, t_prev);    
         return search_prev_vertex_to_split(t_next, v_be, t_prev, triangles, adj);
     }else{   
         //if the triangles surrounding the BET are odd, edges are even
         //Choose any edge of the triangle in the middle; prov is choose due to this always exists
-        adv = floor(adv/2);
-        t_next = advance_i_adjacents_triangles_share_endpoint(adv,t_incident, -1, v_be, triangles, adj);
-        *t_original = t_prev;
-        t_prev = get_adjacent_triangle_share_endpoint(t, t_prev, v_be, triangles, adj);
+        adv = adv/2;
+        t_next = advance_i_adjacents_triangles_share_endpoint(adv,t_incident, t_prev, v_be, triangles, adj);
+        *t_original = t_next;
+        //t_next = get_adjacent_triangle_share_endpoint(t_prev, -1, v_be, triangles, adj);
         debug_print("search_next adv %d t_next %d v_be %d t_prev %d \n", adv, t_next, v_be, t_prev);
         return search_next_vertex_to_split(t_next, v_be, t_prev, triangles, adj);
     }   

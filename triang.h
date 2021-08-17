@@ -16,5 +16,5 @@ int  get_shared_edge(int i, int u, int v, int *p);
 int Equality(float a, float b, float epsilon);
 int GreaterEqualthan(float a, float b, float epsilon);
 int is_max_nomax(int i, int j, int *p, int *max);
-int advance_i_adjacents_triangles_share_endpoint(int adv, int t, int origen, int endpoint, int *p, int *adj);
+int advance_i_adjacents_triangles_share_endpoint(int adv, int t, int &origen, int endpoint, int *p, int *adj);
 int search_triangle_by_vertex_with_FrontierEdge_from_trivertex(int v, int *triangles, int *adj, int tnumber, int* trivertex);

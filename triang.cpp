@@ -478,7 +478,7 @@ int is_continuous(int i, int endpoint, int *p ){
 
 
 // advance i triangles arround vertex endpoint
-int advance_i_adjacents_triangles_share_endpoint(int adv, int t, int origen, int endpoint, int *p, int *adj){
+int advance_i_adjacents_triangles_share_endpoint(int adv, int t, int &origen, int endpoint, int *p, int *adj){
 	int aux;
 	while(adv > 0){
 		printf("%d %d\n", t, origen) ;
