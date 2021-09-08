@@ -119,7 +119,7 @@ void generate_mesh(int argc, char* argv[], detri2::Triangulation *Tr)
       }
     }
   }
-
+  /*
   // Mesh export (to files).
   if (Tr->tr_tris != NULL) {
     if ((Tr->ct_exteriors > 0) && !Tr->op_convex) { // no -c
@@ -136,6 +136,7 @@ void generate_mesh(int argc, char* argv[], detri2::Triangulation *Tr)
       Tr->save_voronoi(Tr->io_out_ucd);
     }
   }
+  */
   //Tr->mesh_statistics();
 
   //delete Tr;

@@ -418,7 +418,7 @@ int Triangulation::read_point_array()
 
   io_firstindex = 1; // index is started from 1.
 
-  printf("Reading %d points from file %s\n", pnum, filename);
+  //printf("Reading %d points from file %s\n", pnum, filename);
   REAL x, y;
 
   for (i = 0; i < pnum; i++) {
@@ -527,7 +527,7 @@ int Triangulation::read_nodes()
   ct_in_vrts = pnum;
   in_vrts = new Vertex[pnum];
 
-  printf("Reading %d points from file %s\n", pnum, filename);
+  //printf(" %d points from file %s\n", pnum, filename);
   REAL x, y, h;
 
   for (i = 0; i < pnum; i++) {
@@ -862,7 +862,7 @@ int Triangulation::read_poly()
     ct_in_vrts = pnum;
     in_vrts = new Vertex[pnum];
   
-    printf("Reading %d points from file %s\n", pnum, filename);
+   // printf("Reading %d points from file %s\n", pnum, filename);
     REAL x, y, h;
   
     for (i = 0; i < pnum; i++) {
@@ -1250,7 +1250,7 @@ int Triangulation::read_inria_mesh()
           ct_in_vrts = pnum;
           in_vrts = new Vertex[pnum];
         
-          printf("Reading %d points from file %s\n", pnum, filename);
+          //printf("Reading %d points from file %s\n", pnum, filename);
           REAL x, y;
         
           io_firstindex = 1; // .mesh use 1 as first index.
@@ -1618,7 +1618,7 @@ int Triangulation::read_poly_mesh()
   in_vrts = new Vertex[nv];
   io_firstindex = 1;
 
-  printf("Reading %d points from file %s\n", nv, filename);
+ // printf("Reading %d points from file %s\n", nv, filename);
   float x, y;  
   int idx = io_firstindex;
   for (i = 0; i < nv; i++) {

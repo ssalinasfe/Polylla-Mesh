@@ -63,7 +63,7 @@ int max_edge_index(int i, double *r, int *p)
 	l1 = dist(r[2*p1 + 0], r[2*p1 + 1], r[2*p2 + 0], r[2*p2 + 1]);
 	l2 = dist(r[2*p2 + 0], r[2*p2 + 1], r[2*p0 + 0], r[2*p0 + 1]);
 	//se aumento la precisión para las mallas de 25k en 2x2
-	double epsion = 0.00000001f;
+	double epsion = 0.0000000001f;
 
 	//if((l0 >= l1 && l1 >= l2) || (l0 >= l2 && l2 >= l1))
 	if( (GreaterEqualthan(l0,l1,epsion) && GreaterEqualthan(l1,l2,epsion)) || ( GreaterEqualthan(l0,l2,epsion) && GreaterEqualthan(l2,l1,epsion)))
@@ -481,13 +481,13 @@ int is_continuous(int i, int endpoint, int *p ){
 int advance_i_adjacents_triangles_share_endpoint(int adv, int t, int &origen, int endpoint, int *p, int *adj){
 	int aux;
 	while(adv > 0){
-		printf("%d %d\n", t, origen) ;
+	//	printf("%d %d\n", t, origen) ;
 		aux = t;
         t = get_adjacent_triangle_share_endpoint(t, origen, endpoint, p, adj);
         origen = aux;
 		adv--;
 	}
-	printf("%d %d\n", t, origen) ;
+	//printf("%d %d\n", t, origen) ;
 	return t;
 }
 

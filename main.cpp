@@ -40,7 +40,7 @@
 int main(int argc, char* argv[]){
 
 	char* ppath;
-	int print_triangles = 1;
+	int print_triangles = 0;
 
 	// int nparam = 3;
     //char* params[] = {const_cast<char*> ("./detri2"), const_cast<char*> ("-z"), const_cast<char*> ("test.node")};
@@ -211,7 +211,7 @@ int main(int argc, char* argv[]){
 				i_mesh = Remove_BE2(1,poly, length_poly, num_BE, triangles, adj, r, tnumber, mesh, i_mesh, trivertex, seed_bet);
 				auto te_be = std::chrono::high_resolution_clock::now();
 				tcost_be += std::chrono::duration_cast<std::chrono::milliseconds>( te_be - tb_be ).count();
-				
+				//i_mesh = save_to_mesh(mesh, poly, i_mesh, length_poly, r);	
 			}else{
 				debug_msg("Guardando poly\n");
 				i_mesh = save_to_mesh(mesh, poly, i_mesh, length_poly, r);	
@@ -225,12 +225,12 @@ int main(int argc, char* argv[]){
 	int num_region = count_regions(mesh,i_mesh);
 
 	std::string name(argv[argc-1]);
-	name.erase(0,6);
+	//name.erase(0,6);
 	name.erase(name.end()-5,name.end());
 
 	write_geomview(name, r, triangles, pnumber, tnumber, i_mesh, mesh, seed, num_region, print_triangles);
 	//write_alejandro(name, r, triangles, pnumber, tnumber, i_mesh, mesh, num_region);
-	write_alejandro_quater_circle(name, r, triangles, pnumber, tnumber, i_mesh, mesh, num_region);
+	//write_alejandro_quater_circle(name, r, triangles, pnumber, tnumber, i_mesh, mesh, num_region);
 	//write_alejandro_custom(name, r, triangles, pnumber, tnumber, i_mesh, mesh, num_region, border, num_border);
 	//write_VEM(name, r, triangles, pnumber, tnumber, i_mesh, mesh, seed, num_region, print_triangles);
 	//write_VEM_triangles(name, r, triangles, adj, pnumber, tnumber, i_mesh, mesh, seed, num_region, seed_bet);
