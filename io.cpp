@@ -115,7 +115,7 @@ void write_geomview(std::string name, double *r, int *triangles, int pnumber, in
     */
     fprintf(fptr,"\n");
     fclose(fptr);
-    std::cout<<"Output saved in: "<<cmd<<std::endl;
+   // std::cout<<"Output saved in: "<<cmd<<std::endl;
 }
 
 void write_metrics(std::string name, double *r, int *triangles, int pnumber, int tnumber, int i_mesh, int *mesh, int num_region, int num_border, int num_terminal_edges, int num_terminal_border_edges, int num_frontier_edges, int num_frontier_border_edges, int num_interior_edges, int t_delaunay, int t_label, int t_total, int t_travel_and_opt, int t_travel, int tcost_be, int num_BE, int est_total_be, int est_min_triangles_be, int est_max_triangles_be, int est_poly_with_be, double est_ratio_be)
@@ -317,7 +317,7 @@ void write_metrics(std::string name, double *r, int *triangles, int pnumber, int
     //std::cout<<" "<<est_total_be; 
     //std::cout<<" "<<t_total; 
     //std::cout<<"\n";
-    std::cout<<"Voronoi_Sites tnumber num_reg num_terminal_edge_regions Sites_per_poly Triangles_per_poly Edge_per_poly max_poly_be Total_BE"<<std::endl;
+    //std::cout<<"Voronoi_Sites tnumber num_reg num_terminal_edge_regions Sites_per_poly Triangles_per_poly Edge_per_poly max_poly_be Total_BE"<<std::endl;
     std::cout<<pnumber;
     std::cout<<" "<<tnumber;
     std::cout<<" "<<num_region;

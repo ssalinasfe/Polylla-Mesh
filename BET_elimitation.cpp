@@ -40,17 +40,18 @@ int Remove_BE2(int option, int *poly, int length_poly, int num_BE, int *triangle
     //search by all barrier edge tips and insert edge in the middle    
     for (i = 0; i < length_poly; i++)
     {
-        x = i % length_poly;
+        x = i;
         y = (i+2) % length_poly;
         if (poly[x] == poly[y]){
+            
             v_be= poly[(i+1) %length_poly];
             debug_print("Encontrado v_be %d %d %d\n", poly[x], v_be, poly[y]);
 
             
-            //t1 = search_triangle_by_vertex_with_FrontierEdge_from_trivertex(v_be, triangles, adj, tnumber, trivertex);
-            t1 = search_triangle_by_vertex_with_FrontierEdge(v_be, triangles, adj, tnumber);
-            //v_other = optimice2_middle_edge(&t1, v_be, triangles, adj);
-            v_other = optimice2_middle_edge_no_memory(&t1, v_be, triangles, adj);
+            t1 = search_triangle_by_vertex_with_FrontierEdge_from_trivertex(v_be, triangles, adj, tnumber, trivertex);
+            //t1 = search_triangle_by_vertex_with_FrontierEdge(v_be, triangles, adj, tnumber);
+            v_other = optimice2_middle_edge(&t1, v_be, triangles, adj);
+            //v_other = optimice2_middle_edge_no_memory(&t1, v_be, triangles, adj);
             if(v_other == -2){
                 fprintf(stderr, "Caso critico especial, no encuentra vertices para avanzar en la busqueda de eliminación de barries edge, pero es la primera iteración\n");
                 debug_print("v_be - v_other: %d - %d | t1 - t2: %d \n", v_be, v_other, t1);
@@ -356,8 +357,8 @@ int Remove_BE(int option, int *poly, int length_poly, int num_BE, int *triangles
     }else if(option == 1){
         t1 = search_triangle_by_vertex_with_FrontierEdge(v_be, triangles, adj, tnumber);
         //t1 = search_triangle_by_vertex_with_FrontierEdge_from_trivertex(v_be, triangles, adj, tnumber, trivertex);
-        //v_other = optimice2_middle_edge(&t1, v_be, triangles, adj);
-        v_other = optimice2_middle_edge_no_memory(&t1, v_be, triangles, adj);
+        v_other = optimice2_middle_edge(&t1, v_be, triangles, adj);
+        //v_other = optimice2_middle_edge_no_memory(&t1, v_be, triangles, adj);
         //printf("v %d, t %d  | Triangles %d %d %d | ADJ  %d %d %d\n", v_be, t1, triangles[3*t1 + 0], triangles[3*t1 + 1], triangles[3*t1 + 2], adj[3*t1 + 0], adj[3*t1 + 1], adj[3*t1 + 2]);
         t2 = get_adjacent_triangle(t1, v_other, v_be, triangles, adj);
     }

@@ -186,7 +186,7 @@ int main(int argc, char* argv[]){
 	auto tb_travel = std::chrono::high_resolution_clock::now();
 	for(i = 0; i < tnumber; i++)
 	{
-		if(seed[i] == TRUE ){			
+		if(seed[i] == TRUE){			
 
 			length_poly = generate_polygon(i, poly, triangles, adj, r);
 			num_BE = count_BarrierEdges(poly, length_poly);
@@ -208,7 +208,8 @@ int main(int argc, char* argv[]){
 				seed[i] = FALSE;
 				//printf("Se dectecto %d BE\n", num_BE);
 				auto tb_be = std::chrono::high_resolution_clock::now();
-				i_mesh = Remove_BE2(1,poly, length_poly, num_BE, triangles, adj, r, tnumber, mesh, i_mesh, trivertex, seed_bet);
+				//i_mesh = Remove_BE2(1,poly, length_poly, num_BE, triangles, adj, r, tnumber, mesh, i_mesh, trivertex, seed_bet);
+				i_mesh = Remove_BE(1,poly, length_poly, num_BE, triangles, adj, r, tnumber, mesh, i_mesh, trivertex);
 				auto te_be = std::chrono::high_resolution_clock::now();
 				tcost_be += std::chrono::duration_cast<std::chrono::milliseconds>( te_be - tb_be ).count();
 				//i_mesh = save_to_mesh(mesh, poly, i_mesh, length_poly, r);	
