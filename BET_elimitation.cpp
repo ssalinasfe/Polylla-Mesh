@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <list>
+#include <vector> 
 
 #include "consts.h"
 #include "triang.h"
@@ -22,6 +23,317 @@
 #define debug_block(fmt) do { if (DEBUG_TEST){ fmt }} while (0)
 #define debug_print(fmt, ...) do { if (DEBUG_TEST) fprintf(stderr, "%s:%d:%s(): " fmt, __FILE__, __LINE__, __func__, __VA_ARGS__); } while (0)
 #define debug_msg(fmt) do { if (DEBUG_TEST) fprintf(stderr, "%s:%d:%s(): " fmt, __FILE__,  __LINE__, __func__); } while (0)
+
+
+//Remove bet using a bitvector
+int Remove_BE3(int option, int *poly, int length_poly, int num_BE, int *triangles, int *adj, double *r, int tnumber, int *mesh, int i_mesh, int* trivertex, std::list <int> &seed_bet, std::vector <int> &seed_bet_mark){
+    
+    int i,j,k,x,y, auxind_poly, ind_poly, ind_poly_after;
+    int v_be, v_other;
+    int t1, t2, triangle;
+    
+    int index;
+
+    //list is initialize
+    std::list<int> triangle_list;
+
+    debug_print("Removiendo %d barrier-edges de ", num_BE); debug_block(print_poly(poly, length_poly); );
+    //search by all barrier edge tips and insert edge in the middle    
+    for (i = 0; i < length_poly; i++)
+    {
+        x = i;
+        y = (i+2) % length_poly;
+        if (poly[x] == poly[y]){
+            
+            v_be= poly[(i+1) %length_poly];
+            debug_print("Encontrado v_be %d %d %d\n", poly[x], v_be, poly[y]);
+            t1 = search_triangle_by_vertex_with_FrontierEdge_from_trivertex(v_be, triangles, adj, tnumber, trivertex);
+            //t1 = search_triangle_by_vertex_with_FrontierEdge(v_be, triangles, adj, tnumber);
+            v_other = optimice2_middle_edge(&t1, v_be, triangles, adj);
+            //v_other = optimice2_middle_edge_no_memory(&t1, v_be, triangles, adj);
+            if(v_other == -2){
+                fprintf(stderr, "Caso critico especial, no encuentra vertices para avanzar en la busqueda de eliminación de barries edge, pero es la primera iteración\n");
+                debug_print("v_be - v_other: %d - %d | t1 - t2: %d \n", v_be, v_other, t1);
+            }
+            t2 = get_adjacent_triangle(t1, v_other, v_be, triangles, adj);
+            debug_print("v_be - v_other: %d - %d | t1 - t2: %d - %d\n", v_be, v_other, t1, t2);
+            //"<<std::endl;
+            // Agregar arista
+            if(t2 >= 0){
+                adj[3*t1 + get_shared_edge(t1, v_be, v_other, triangles)] = NO_ADJ;
+                adj[3*t2 + get_shared_edge(t2, v_be, v_other, triangles)] = NO_ADJ;
+
+                triangle_list.push_back(t2);
+                triangle_list.push_back(t1);
+                seed_bet_mark[t2] = 1;
+                seed_bet_mark[t1] = 1;
+                
+            }else{ //caso raro, t2 no tiene adjacencia
+                triangle_list.push_back(t1);
+                seed_bet_mark[t1] = 1;
+            }
+        }
+    }
+    debug_block(
+        debug_msg("Triangle list containts: ");
+        for (std::list<int>::iterator it=triangle_list.begin(); it!=triangle_list.end(); ++it)
+            printf("%d ", *it);
+        printf("\n"); 
+    );
+    
+    ind_poly = 0;
+    while (!triangle_list.empty())
+    {
+        triangle = triangle_list.front();
+        triangle_list.pop_front();
+        debug_print("Generando poly con triangle %d\n", triangle);
+        if(seed_bet_mark[triangle]){
+            seed_bet_mark[triangle] = 0;
+            //generate polygon with index ind_poly +1 
+            ind_poly_after = generate_polygon_from_BE_with_vector(triangle, poly,triangles,adj,r,ind_poly+1, seed_bet_mark); 
+            poly[ind_poly] = ind_poly_after - ind_poly - 1; // calculate lenght poly and save it before their vertex
+            ind_poly = ind_poly_after;
+            seed_bet.push_front(triangle);
+        }
+    }
+
+    //save new polygons in mesh
+    for(int i = 0; i <ind_poly; i++){
+        mesh[i_mesh + i] = poly[i];
+    }
+    return i_mesh + ind_poly;
+    
+}
+
+
+int generate_polygon_from_BE_with_vector(int i, int * poly, int * triangles, int * adj, double *r, int ind_poly, std::vector <int> &seed_bet_mark){
+//    int ind_poly = 0;
+	
+	int initial_point = 0;
+	int end_point = 0;
+	
+	int t0;
+	int t1;	
+	int t2;
+    int ind0;
+    int ind1;
+    int ind2;
+	int continuous;
+	int k, j, aux;
+	int origen;
+
+    int num_FrontierEdges = count_FrontierEdges(i, adj);
+    debug_print("Generando polinomio con triangulo %d FE %d\n", i, num_FrontierEdges);
+    /*si tiene 3 se agregan y se corta el ciclo*/
+    if (num_FrontierEdges == 3) {
+        debug_print("T %d Tiene 3 Frontier edge, se guardan así\n", i);
+        poly[ind_poly] = triangles[3 * i + 0];
+        ind_poly++;
+        poly[ind_poly] = triangles[3 * i + 1];
+        ind_poly++;
+        poly[ind_poly] = triangles[3 * i + 2];
+        ind_poly++;
+
+        //visited[i] = TRUE;
+        return ind_poly;
+    } else if(num_FrontierEdges == 2) {
+        debug_print("T %d Tiene 2 Frontier edge, es oreja, se usa como semilla para generar el poly\n", i);
+        /*si tiene dos FE se agregan y se empieza el ciclo*/
+        for(j = 0; j<3; j++){
+            ind0 = 3*i + j;
+            ind1 = 3*i + (j+1)%3;
+            ind2 = 3*i + (j+2)%3;
+            if(adj[ind0] == NO_ADJ && adj[ind1] == NO_ADJ){
+                poly[ind_poly] = triangles[ind1];
+                ind_poly++;
+                poly[ind_poly] = triangles[ind2];
+                ind_poly++;
+
+                initial_point = triangles[ind1];
+                end_point = triangles[ind0];  
+            }
+        }
+    }else if (num_FrontierEdges == 1){
+        debug_print("T %d Tiene 1 Frontier edge,se usa como FE initial\n", i);
+        /*si tiene dos FE se agregan y se empieza el ciclo*/
+        for(j = 0; j<3; j++){
+            if(adj[3*i + j] == NO_ADJ){
+                poly[ind_poly] = triangles[3*i + (j+1)%3];
+                ind_poly++;
+                initial_point = triangles[3*i + (j+1)%3];
+
+                end_point = triangles[3*i + (j+2)%3];  
+            }
+        }
+    }else {
+        end_point = triangles[3*i + 0];
+        initial_point = triangles[3*i + 0];
+    }
+    
+    
+    /*se marca como visitado */
+    //visited[i] = TRUE;
+    num_FrontierEdges = 0;
+    k = i;
+    aux = k;
+    k = get_adjacent_triangle_share_endpoint(k, k, end_point, triangles, adj); /* cambia el indice */
+    continuous = is_continuous(k, end_point, triangles);
+    origen = aux;
+//        debug_print("k %d origen %d, conti %d\n", k, origen, continuous);
+    debug_print("T_inicial %d | Triangles %d %d %d | ADJ  %d %d %d\n", i, triangles[3*i + 0], triangles[3*i + 1], triangles[3*i + 2], adj[3*i + 0], adj[3*i + 1], adj[3*i + 2]);
+    debug_print("initial_point %d endpoint %d | T_sig %d\n", initial_point, end_point, k);
+
+    int triangugulo_initial = i;
+    while (initial_point != end_point || triangugulo_initial != k) {
+
+        /*se marca el triangulo visto como visitado y se suma al area del poligono */
+        seed_bet_mark[k] = 0;
+      //  visited[k] = TRUE;
+        t0 = adj[3 * k + 0];
+        t1 = adj[3 * k + 1];
+        t2 = adj[3 * k + 2];
+
+        num_FrontierEdges = count_FrontierEdges(k, adj);
+        debug_print("FE %d | origen %d t %d | Triangles %d %d %d | ADJ  %d %d %d\n", num_FrontierEdges, origen, k, triangles[3*k + 0], triangles[3*k + 1], triangles[3*k + 2], adj[3*k + 0], adj[3*k + 1], adj[3*k + 2]);
+        if(origen == -2)
+            exit(0);
+        if (num_FrontierEdges == 2 && continuous != -1) {
+            /* ///////////////////si tiene 2 frontier edge se agregan a poly //////////////////////////////////// */
+
+            if (t0 == NO_ADJ && t1 == NO_ADJ) {
+                /*si endpoint es continua a t0  y t0-t1 son fe*/
+                if (continuous == 1) {
+                    poly[ind_poly] = triangles[3 * k + 1];
+                    ind_poly++;
+                    poly[ind_poly] = triangles[3 * k + 2];
+                    ind_poly++;
+
+                    end_point = triangles[3 * k + 0];
+
+                } else if (continuous == 0) {
+                    poly[ind_poly] = triangles[3 * k + 0];
+                    ind_poly++;
+                    poly[ind_poly] = triangles[3 * k + 2];
+                    ind_poly++;
+
+                    end_point = triangles[3 * k + 1];
+                }
+            } else if (t2 == NO_ADJ && t0 == NO_ADJ) {
+                /*si endpoint es continua a t2  y t2-t0 son fe*/
+                if (continuous == 0) {
+                    poly[ind_poly] = triangles[3 * k + 0];
+                    ind_poly++;
+                    poly[ind_poly] = triangles[3 * k + 1];
+                    ind_poly++;
+
+                    end_point = triangles[3 * k + 2];
+
+                } else if (continuous == 2) {
+                    poly[ind_poly] = triangles[3 * k + 2];
+                    ind_poly++;
+                    poly[ind_poly] = triangles[3 * k + 1];
+                    ind_poly++;
+
+                    end_point = triangles[3 * k + 0];
+
+                }
+            } else if (t1 == NO_ADJ && t2 == NO_ADJ) {
+                /*si endpoint es continua a t1 y t1-t2 son fe*/
+                if (continuous == 2) {
+                    poly[ind_poly] = triangles[3 * k + 2];
+                    ind_poly++;
+                    poly[ind_poly] = triangles[3 * k + 0];
+                    ind_poly++;
+
+                    end_point = triangles[3 * k + 1];
+
+                } else if (continuous == 1) {
+                    poly[ind_poly] = triangles[3 * k + 1];
+                    ind_poly++;
+                    poly[ind_poly] = triangles[3 * k + 0];
+                    ind_poly++;
+
+                    end_point = triangles[3 * k + 2];
+
+                }
+            } else {
+                fprintf(stderr, "** ERROR ** Adding 2 fronter edges\n");
+                fprintf(stderr, "** ERROR ** k %d t %d %d %d ini %d end %d \n", k, t0, t1, t2, initial_point, end_point);
+            }
+
+            aux = k;
+            k = get_adjacent_triangle_share_endpoint(k, -1, end_point, triangles, adj); /* se le permite volver al triangulo anterior */
+            continuous = is_continuous(k, end_point, triangles);
+            origen = aux;
+
+        } else if (num_FrontierEdges == 1 && continuous != -1) {
+            /* ///////////////////si solo se tiene 1 frontier edge //////////////////////////////////// */
+            if (t0 == NO_ADJ) {
+                /*si endpoint es continua a t0  y t0 es fe*/
+                if (continuous == 1) {
+                    poly[ind_poly] = triangles[3 * k + 1];
+                    ind_poly++;
+
+                    end_point = triangles[3 * k + 2];
+
+                } else if (continuous == 2) {
+                    poly[ind_poly] = triangles[3 * k + 2];
+                    ind_poly++;
+
+                    end_point = triangles[3 * k + 1];
+
+                }
+            } else if (t2 == NO_ADJ) {
+                /*si endpoint es continua a t2  y t2 es fe*/
+                if (continuous == 0) {
+                    poly[ind_poly] = triangles[3 * k + 0];
+                    ind_poly++;
+
+                    end_point = triangles[3 * k + 1];
+
+                } else if (continuous == 1) {
+                    poly[ind_poly] = triangles[3 * k + 1];
+                    ind_poly++;
+
+                    end_point = triangles[3 * k + 0];
+
+                }
+            } else if (t1 == NO_ADJ) {
+                /*si endpoint es continua a t1  y t1 es fe*/
+                if (continuous == 2) {
+                    poly[ind_poly] = triangles[3 * k + 2];
+                    ind_poly++;
+
+                    end_point = triangles[3 * k + 0];
+
+                } else if (continuous == 0) {
+                    poly[ind_poly] = triangles[3 * k + 0];
+                    ind_poly++;
+
+                    end_point = triangles[3 * k + 2];
+
+                }
+            } else {
+                fprintf(stderr, "** ERROR ** Adding 1 fronter edges\n");
+                fprintf(stderr, "** ERROR ** k %d t %d %d %d ini %d end %d conti %d\n", k, t0, t1, t2, initial_point, end_point, continuous);
+            }
+            /*si es continuo y tiene 1 fe no puede volver, ind si se guarda  o no*/
+            aux = k;
+            k = get_adjacent_triangle_share_endpoint(k, origen, end_point, triangles, adj); /* cambia el indice */
+            continuous = is_continuous(k, end_point, triangles);
+            origen = aux;
+        } else {
+            /*si no es continuo no puede regresar de donde venía*/
+            aux = k;
+            k = get_adjacent_triangle_share_endpoint(k, origen, end_point, triangles, adj); /* cambia el indice */
+            continuous = is_continuous(k, end_point, triangles);
+            origen = aux;
+        }
+
+    }
+    
+    return ind_poly;
+}
 
 
 int Remove_BE2(int option, int *poly, int length_poly, int num_BE, int *triangles, int *adj, double *r, int tnumber, int *mesh, int i_mesh, int* trivertex, std::list <int> &seed_bet){

@@ -322,11 +322,11 @@ void write_metrics(std::string name, double *r, int *triangles, int pnumber, int
     std::cout<<" "<<tnumber;
     std::cout<<" "<<num_region;
     std::cout<<" "<<num_terminal_border_edges + num_terminal_edges/2;
-    std::cout<<" "<<(float) pnumber/num_region;
-    std::cout<<" "<<(float) tnumber/num_region;
-    std::cout<<" "<<(float) est_total_edges/num_region;
-    std::cout<<" "<<est_max_triangles_be;
-    std::cout<<" "<<est_total_be;
+    //std::cout<<" "<<(float) pnumber/num_region;
+    //std::cout<<" "<<(float) tnumber/num_region;
+    //std::cout<<" "<<(float) est_total_edges/num_region;
+    //std::cout<<" "<<est_max_triangles_be;
+    //std::cout<<" "<<est_total_be;
     std::cout<<"\n";
 	//std::cout<<" "<<est_poly_with_be<<" "<<est_total_be<<" "<<est_min_triangles_be<<" "<<est_max_triangles_be;
 	//std::cout<<" "<<(est_poly_with_be > 0 ? est_ratio_be/est_poly_with_be : 0.0);
@@ -334,7 +334,7 @@ void write_metrics(std::string name, double *r, int *triangles, int pnumber, int
 	//std::cout<<" "<<num_terminal_edges/2<<" "<<num_terminal_border_edges<<" "<<num_frontier_edges/2<<" //"<<num_frontier_border_edges<<" "<<num_interior_edges/2;
 
 	//std::cout<<num_terminal_border_edges<<" "<<3*pnumber - 3 - (num_terminal_border_edges + num_frontier_border_edges) <<" = "<<num_terminal_edges/2 + num_terminal_border_edges + num_frontier_edges/2 + num_frontier_border_edges + num_interior_edges/2<<" "<<(3*pnumber - 3 - (num_terminal_border_edges + num_frontier_border_edges) == num_terminal_edges/2 + num_terminal_border_edges + num_frontier_edges/2 + num_frontier_border_edges + num_interior_edges/2)<<std::endl;
-
+     //std::cout<<"Metric saved in: "<<cmd<<std::endl;
 }
 
 /*geomview output*/
@@ -797,7 +797,6 @@ void write_alejandro_quater_circle(std::string name, double *r, int *triangles, 
     fprintf(fptr, "%.16f %.16f %.16f %.16f\n", xmin, xmax, ymin, ymax);
     fclose(fptr);
 }
-
 
 int look_triangles(int i, std::set<int> &s, int * triangles, int * adj, double *r) {
 

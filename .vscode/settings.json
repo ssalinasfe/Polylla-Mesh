@@ -65,5 +65,8 @@
         "variant": "cpp",
         "bit": "cpp"
     },
-    "cmake.configureOnOpen": true
+    "cmake.configureOnOpen": true,
+    "cSpell.ignoreWords": [
+        "trivertex"
+    ]
 }

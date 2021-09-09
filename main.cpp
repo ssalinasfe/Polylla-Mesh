@@ -10,6 +10,8 @@
 #include <string>
 #include <math.h>  
 
+
+
 #include "delaunay.h"
 #include "io.h"
 #include "consts.h"
@@ -180,9 +182,11 @@ int main(int argc, char* argv[]){
 	
     int length_poly;
 	std::list <int> seed_bet;  
+	std::vector <int> seed_bet_mark(3*tnumber, 0);
 	
 	debug_msg("Etapa 5: Generar poligonos\n");
 	int poly[1000];	
+	//std::bitset<tnumber> tuhermana;
 	auto tb_travel = std::chrono::high_resolution_clock::now();
 	for(i = 0; i < tnumber; i++)
 	{
@@ -208,8 +212,9 @@ int main(int argc, char* argv[]){
 				seed[i] = FALSE;
 				//printf("Se dectecto %d BE\n", num_BE);
 				auto tb_be = std::chrono::high_resolution_clock::now();
+				i_mesh = Remove_BE3(1,poly, length_poly, num_BE, triangles, adj, r, tnumber, mesh, i_mesh, trivertex, seed_bet, seed_bet_mark);
 				//i_mesh = Remove_BE2(1,poly, length_poly, num_BE, triangles, adj, r, tnumber, mesh, i_mesh, trivertex, seed_bet);
-				i_mesh = Remove_BE(1,poly, length_poly, num_BE, triangles, adj, r, tnumber, mesh, i_mesh, trivertex);
+				//i_mesh = Remove_BE(1,poly, length_poly, num_BE, triangles, adj, r, tnumber, mesh, i_mesh, trivertex);
 				auto te_be = std::chrono::high_resolution_clock::now();
 				tcost_be += std::chrono::duration_cast<std::chrono::milliseconds>( te_be - tb_be ).count();
 				//i_mesh = save_to_mesh(mesh, poly, i_mesh, length_poly, r);	
