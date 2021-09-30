@@ -1,10 +1,13 @@
 #include <iostream>
 #include <stdio.h>   
 #include <stdlib.h>     /* exit, EXIT_FAILURE */
-#include "detri2.h"
+
 #include <assert.h> 
 #include "polygon.h"
 #include "triang.h"
+
+
+#include <detri2.h>
 
 detri2::Triangulation *trimesh;
 
@@ -162,6 +165,19 @@ void generate_delaunay_from_random_points(int argc, char* argv[], int &pnumber, 
 
 }
 
+void generate_constrained_vonoronoi(){
+    if ((trimesh->ct_exteriors > 0) && !trimesh->op_convex) { // no -c
+      trimesh->remove_exteriors();
+    }
+    trimesh->construct_voronoi_diagram();
+    trimesh->Voronoi->save_triangulation();
+    trimesh->Voronoi->save_edges();
+}
+
+void free_detri2(){
+  delete trimesh;  
+}
+
 //Fullfil arrays with delaunay triangulation data
 //Input: r (array of points), triangles(array of triangles), adj (array of neigh)
 void copy_delaunay_arrays(int tnumber, double *r, int* triangles, int* adj){
@@ -223,7 +239,7 @@ void copy_delaunay_arrays(int tnumber, double *r, int* triangles, int* adj){
 	//	std::cout<<std::endl;
 	//}
 
-    delete trimesh;   
+   
 }
 
 

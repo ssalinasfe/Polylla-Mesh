@@ -142,6 +142,8 @@ double get_signed_area_poly(int *poly, int length_poly, double *r){
 }
 
 
+
+
 int count_BarrierEdges(int *poly, int length_poly){
     int count = 0;
     int x, y,i;
@@ -154,6 +156,20 @@ int count_BarrierEdges(int *poly, int length_poly){
     }
     return count;
 }
+
+int has_BarrierEdgeTip(int *poly, int length_poly){
+    int count = 0;
+    int x, y,i;
+    for (i = 0; i < length_poly; i++)
+    {
+        x = i % length_poly;
+        y = (i+2) % length_poly;
+        if (poly[x] == poly[y])
+            return 1;
+    }
+    return 0;
+}
+
 
 int get_vertex_BarrierEdge(int *poly, int length_poly){
     int x, y,i;

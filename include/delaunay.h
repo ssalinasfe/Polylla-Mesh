@@ -1,8 +1,8 @@
 void generate_delaunay_from_random_points(int argc, char* argv[], int &pnumber, int &tnumber);
 void copy_delaunay_arrays(int tnumber, double *r, int* triangles, int* adj);
 int get_border_points(int pnumber, int tnumber, int *border, int * triangles, int * adj, double *r);
-
-
+void generate_constrained_vonoronoi();
+void free_detri2();
 /*
 Por hacer 
 

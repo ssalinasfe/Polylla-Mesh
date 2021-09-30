@@ -1,3 +1,19 @@
+/* 
+TODO
+- Agregar que acepte cualquier input mientras que tengan un archivo .node. .ele, -neigh
+- Verificar la estructura de datos del input para que haya una correcta asociación de los triangulos y la adjacencia
+- Aceptar como input .node and .ele y generar la adjacencia en base a  eso.
+- Usar safe arrays en vez de array
+- Cambiar polygon array por list o vector
+- Eliminar funciones no usadas
+- Reescribir todo y encapsularlo en una clase para usarlo como librería
+- Llamar a triangle en vez de a detri2 cuadno solo se tenga de input un .node (detri no genera triangulaciones de más 10^6 puntos)
+- Generar como output un svg
+- Construir test
+*/
+
+
+
 #include <iostream>
 #include <stdio.h>   
 #include <stdlib.h>     /* exit, EXIT_FAILURE */
@@ -61,10 +77,16 @@ int main(int argc, char* argv[]){
 	int *mesh;
 	int *trivertex;
 	
+	std::cout<<"Generando Delaunay"<<std::endl;
 	auto tb_delaunay = std::chrono::high_resolution_clock::now();
 	generate_delaunay_from_random_points(argc, argv, pnumber,tnumber);
 	auto te_delaunay = std::chrono::high_resolution_clock::now();
-
+	std::cout<<"Generado Delaunay, copiando variables"<<std::endl;
+/*
+	auto tb_voronoi = std::chrono::high_resolution_clock::now();
+	generate_constrained_vonoronoi();
+	auto te_voronoi = std::chrono::high_resolution_clock::now();
+*/
 	r = (double *)malloc(2*pnumber*sizeof(double)); // cambiar por pnumber
     triangles = (int *)malloc(3*tnumber*sizeof(int));
 	adj = (int *)malloc(3*tnumber*sizeof(int));
@@ -76,6 +98,7 @@ int main(int argc, char* argv[]){
 	int *border = (int *)malloc(2*tnumber*sizeof(int));
 
 	copy_delaunay_arrays(tnumber, r, triangles, adj);
+	free_detri2();
 
 	//Asociate each vertex to an adjacent  triangle
 	for(i = 0; i < pnumber; i++){
@@ -108,15 +131,23 @@ int main(int argc, char* argv[]){
 	}
 	
 	auto t1 = std::chrono::high_resolution_clock::now();
+	
+	std::cout<<"Etiquetando aristas máximas"<<std::endl;
 	auto tb_label =std::chrono::high_resolution_clock::now();
 	/* Etapa 1: Encontrar aristas máximas. */
+
+	auto tb_label_max_edge = std::chrono::high_resolution_clock::now();
 	debug_msg("Etapa 1: Encontrar aristas máximas. \n");
 	for(i = 0; i < tnumber; i++)
 	{
 		//max[i] marca la arista entre los puntos P0-P1 como 0, P1-P2 como 1 y P2-P0 como 2 del arreglo triangles
 		max[i] = max_edge_index(i, r, triangles); 
 	}	
-	
+	auto te_label_max_edge = std::chrono::high_resolution_clock::now();
+
+
+	auto tb_label_seed = std::chrono::high_resolution_clock::now();
+	std::cout<<"Etiquetando triangulos semilla"<<std::endl;
 	//Marcar triangulos semilla
 	for(i = 0; i < tnumber; i++){
 		for(j = 0; j < 3; j++){
@@ -133,21 +164,23 @@ int main(int argc, char* argv[]){
 			}
 		}
 	}
-
+	auto te_label_seed = std::chrono::high_resolution_clock::now();
+	
 	/* Etapa 2: Desconectar arcos asociados a aristas nomáx-nomáx. */
 	debug_msg("Etapa 2: Desconectar arcos asociados a aristas nomáx-nomáx. \n");
-	
+
+	auto tb_label_no_count = std::chrono::high_resolution_clock::now();
+	std::cout<<"Generando datos estadisticos"<<std::endl;
+	//data estadistica
 	int num_terminal_edges =0;
 	int num_terminal_border_edges=0;
 	int num_frontier_edges=0;
 	int num_frontier_border_edges=0;
 	int num_interior_edges=0;
-		
 	for(i = 0; i < tnumber; i++)
 	{
 		for(j = 0; j < 3; j++)
 		{
-			
 			if(adj[3*i + j] < 0){
 				if ((j + 1)%3 == max[i])
 					num_terminal_border_edges++;
@@ -166,7 +199,18 @@ int main(int argc, char* argv[]){
 				//if(is_max_nomax(i, adj[3*i + j], triangles, max))
 			}
 			
+		}
+	}
 
+
+	std::cout<<"Etiquetando frontier-edges"<<std::endl;
+	auto te_label_no_count = std::chrono::high_resolution_clock::now();
+
+	auto tb_label_no_frontier_edges = std::chrono::high_resolution_clock::now();
+	for(i = 0; i < tnumber; i++)
+	{
+		for(j = 0; j < 3; j++)
+		{
 			//Marcación real
 			if(adj[3*i +j] < 0 || is_nomax_nomax(i, adj[3*i + j], triangles, max))
 			{
@@ -175,18 +219,23 @@ int main(int argc, char* argv[]){
 			
 		}
 	}
+	auto te_label_no_frontier_edges = std::chrono::high_resolution_clock::now();
 	auto te_label =std::chrono::high_resolution_clock::now();
+
+
 	
 	free(max);
 	
 	
     int length_poly;
 	std::list <int> seed_bet;  
-	std::vector <int> seed_bet_mark(3*tnumber, 0);
+	std::vector <int> seed_bet_mark(tnumber, 0);
 	
 	debug_msg("Etapa 5: Generar poligonos\n");
-	int poly[1000];	
+	std::cout<<"Generando polygonos"<<std::endl;
+	int *poly = (int *)malloc(tnumber*sizeof(int));
 	//std::bitset<tnumber> tuhermana;
+	//std::chrono::time_point<std::chrono::system_clock> tsum_costbe, tb_be, te_be;
 	auto tb_travel = std::chrono::high_resolution_clock::now();
 	for(i = 0; i < tnumber; i++)
 	{
@@ -216,7 +265,7 @@ int main(int argc, char* argv[]){
 				//i_mesh = Remove_BE2(1,poly, length_poly, num_BE, triangles, adj, r, tnumber, mesh, i_mesh, trivertex, seed_bet);
 				//i_mesh = Remove_BE(1,poly, length_poly, num_BE, triangles, adj, r, tnumber, mesh, i_mesh, trivertex);
 				auto te_be = std::chrono::high_resolution_clock::now();
-				tcost_be += std::chrono::duration_cast<std::chrono::milliseconds>( te_be - tb_be ).count();
+				tcost_be += std::chrono::duration_cast<std::chrono::nanoseconds>( te_be - tb_be ).count();
 				//i_mesh = save_to_mesh(mesh, poly, i_mesh, length_poly, r);	
 			}else{
 				debug_msg("Guardando poly\n");
@@ -242,12 +291,20 @@ int main(int argc, char* argv[]){
 	//write_VEM_triangles(name, r, triangles, adj, pnumber, tnumber, i_mesh, mesh, seed, num_region, seed_bet);
 	//write_GID(name, r, triangles, adj, pnumber, tnumber);
 	//write_triangulation(name, r, triangles, adj, pnumber, tnumber);
+
+	tcost_be = tcost_be/1000000;
 	int t_delaunay = std::chrono::duration_cast<std::chrono::milliseconds>(te_delaunay - tb_delaunay).count();
-	int t_label = std::chrono::duration_cast<std::chrono::milliseconds>(te_label - tb_label).count();
-	int t_total = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1 ).count();
+	int t_label_no_count = std::chrono::duration_cast<std::chrono::milliseconds>(te_label_no_count - tb_label_no_count).count(); 
+	int t_label = std::chrono::duration_cast<std::chrono::milliseconds>(te_label - tb_label - (te_label_no_count - tb_label_no_count) ).count();
+	//int t_total = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() - t_label_no_count;
 	int t_travel_and_opt = std::chrono::duration_cast<std::chrono::milliseconds>(te_travel - tb_travel).count();
-	int t_travel = std::chrono::duration_cast<std::chrono::milliseconds>(te_travel - tb_travel).count() - tcost_be;
+	int t_travel = std::chrono::duration_cast<std::chrono::milliseconds>(te_travel - tb_travel ).count() - tcost_be; 
 	
+	int t_label_max_edge = std::chrono::duration_cast<std::chrono::milliseconds>(te_label_max_edge - tb_label_max_edge).count();
+	int t_label_seed = std::chrono::duration_cast<std::chrono::milliseconds>(te_label_seed - tb_label_seed).count();
+	int t_label_no_frontier_edges = std::chrono::duration_cast<std::chrono::milliseconds>(te_label_no_frontier_edges - tb_label_no_frontier_edges).count();
+	std::cout<<"label phase "<<t_label<<" ( calculate max: "<<t_label_max_edge<<", label seed: "<<t_label_seed<<" label fe: "<<t_label_no_frontier_edges<<" )"<<std::endl;
+	int t_total = t_label + t_travel_and_opt;
 	write_metrics(name,r, triangles, pnumber, tnumber,i_mesh,  mesh,  num_region,  num_border,  num_terminal_edges,  num_terminal_border_edges,  num_frontier_edges,  num_frontier_border_edges,  num_interior_edges,  t_delaunay,  t_label,  t_total,  t_travel_and_opt,  t_travel, tcost_be, num_BE,  est_total_be,  est_min_triangles_be,  est_max_triangles_be,  est_poly_with_be, est_ratio_be);
 	
 	free(trivertex);
@@ -257,7 +314,6 @@ int main(int argc, char* argv[]){
 	free(seed);
 	free(mesh);    
 	free(border);
+	free(poly);
 	return EXIT_SUCCESS;
 }
-    
-

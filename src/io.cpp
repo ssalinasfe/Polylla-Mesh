@@ -98,7 +98,7 @@ void write_geomview(std::string name, double *r, int *triangles, int pnumber, in
             fprintf(fptr,"0 1 1 1\n");
         }
     }
-
+    
     fprintf(fptr," }\n");
     if(print_triangles){
         fprintf(fptr," }\n");
@@ -322,6 +322,10 @@ void write_metrics(std::string name, double *r, int *triangles, int pnumber, int
     std::cout<<" "<<tnumber;
     std::cout<<" "<<num_region;
     std::cout<<" "<<num_terminal_border_edges + num_terminal_edges/2;
+    std::cout<<" "<<t_total;
+    std::cout<<" "<<t_label;
+    std::cout<<" "<<t_travel;
+    std::cout<<" "<<tcost_be;
     //std::cout<<" "<<(float) pnumber/num_region;
     //std::cout<<" "<<(float) tnumber/num_region;
     //std::cout<<" "<<(float) est_total_edges/num_region;

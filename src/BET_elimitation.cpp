@@ -49,8 +49,8 @@ int Remove_BE3(int option, int *poly, int length_poly, int num_BE, int *triangle
             debug_print("Encontrado v_be %d %d %d\n", poly[x], v_be, poly[y]);
             t1 = search_triangle_by_vertex_with_FrontierEdge_from_trivertex(v_be, triangles, adj, tnumber, trivertex);
             //t1 = search_triangle_by_vertex_with_FrontierEdge(v_be, triangles, adj, tnumber);
-            v_other = optimice2_middle_edge(&t1, v_be, triangles, adj);
-            //v_other = optimice2_middle_edge_no_memory(&t1, v_be, triangles, adj);
+            //v_other = optimice2_middle_edge(&t1, v_be, triangles, adj);
+            v_other = optimice2_middle_edge_no_memory(&t1, v_be, triangles, adj);
             if(v_other == -2){
                 fprintf(stderr, "Caso critico especial, no encuentra vertices para avanzar en la busqueda de eliminación de barries edge, pero es la primera iteración\n");
                 debug_print("v_be - v_other: %d - %d | t1 - t2: %d \n", v_be, v_other, t1);
