@@ -1,5 +1,5 @@
 
-# POLYLLA: Polygonal meshing algorithmbased on terminal-edge regions
+# POLYLLA: Polygonal meshing algorithm based on terminal-edge regions
 
 New algorithm to generate polygonal meshes of arbitrary shape, using any kind of triangulation as input, adaptable to any kind of geometry, no addition of extra points and with a data structure tp an easy implementation to all language programmings.
 
