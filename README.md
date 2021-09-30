@@ -5,7 +5,7 @@ New algorithm to generate polygonal meshes of arbitrary shape, using any kind of
 
 The input commands are the same as Detri2, the inputs files are
 
-- **[.node](https://www.cs.cmu.edu/~quake/triangle.node.html)**: Random point file
+- **[.node](https://www.cs.cmu.edu/~quake/triangle.node.html)**: Point file
 - **[.ele](https://www.cs.cmu.edu/~quake/triangle.ele.html)**: Triangle file
 - **[.poly](https://www.cs.cmu.edu/~quake/triangle.poly.html)**: PLSG file
 
@@ -51,7 +51,7 @@ Following scripts to generate input files were made to test the algorithm using 
   - 2x2Lrandom.py: Generate a PLSG with L-shape with random points inside of it
   - 2x2QuaterCircle.py: Generate a PLSG in a square of 2x2 with a quartercircle of radio 0.4 in the left botton corner and random points inside of it
 
-## Semiuniform trilations (.node and .ele)
+## Semiuniform triangulations (.node and .ele)
     
   - R2DiskSemiuniform.py: Generate a semiuniform triangulation in a disk of radio 2
   - 2x2QuaterCircleUniform.py: Generate a semi Uniform triangulation inside a square of 2x2 with a quartercircle of radio 0.4 in the left botton corner.
