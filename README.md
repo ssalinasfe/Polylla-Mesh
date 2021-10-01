@@ -35,7 +35,7 @@ Files are stored in the directory [Executable folder]/output
   - [ ] Eliminar funciones no usadas
   - [ ] Reescribir todo y encapsularlo en una clase para usarlo como librería
   - [ ] Llamar a triangle en vez de a detri2 cuadno solo se tenga de input un .node (detri no genera triangulaciones de más 10^6 puntos)
-  - [ ] Generar como output un svg
+  - [X] Generar como output un svg
   - [ ] Construir test
 
 
