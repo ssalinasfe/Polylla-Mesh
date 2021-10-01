@@ -284,6 +284,7 @@ int main(int argc, char* argv[]){
 	name.erase(name.end()-5,name.end());
 
 	write_geomview(name, r, triangles, pnumber, tnumber, i_mesh, mesh, seed, num_region, print_triangles);
+	write_svg(name, r, triangles, pnumber, tnumber, i_mesh, mesh, seed, num_region, print_triangles);
 	//write_alejandro(name, r, triangles, pnumber, tnumber, i_mesh, mesh, num_region);
 	//write_alejandro_quater_circle(name, r, triangles, pnumber, tnumber, i_mesh, mesh, num_region);
 	//write_alejandro_custom(name, r, triangles, pnumber, tnumber, i_mesh, mesh, num_region, border, num_border);

@@ -1,7 +1,3 @@
-/* Funciones para manejar entrada y salida de datos. */
-
-#define _POSIX_C_SOURCE 200112L /* Para popen, pclose y posix_memalign. */
-
 #include <iostream>
 #include <vector> 
 #include <algorithm>
@@ -116,6 +112,158 @@ void write_geomview(std::string name, double *r, int *triangles, int pnumber, in
     fprintf(fptr,"\n");
     fclose(fptr);
    // std::cout<<"Output saved in: "<<cmd<<std::endl;
+}
+
+int r8_to_i4 ( double xmin, double xmax, double x, int ixmin, int ixmax )
+
+//****************************************************************************80
+//
+//  Purpose:
+//
+//    R8_TO_I4 maps real X in [XMIN, XMAX] to integer IX in [IXMIN, IXMAX].
+//
+//  Discussion:
+//
+//    IX := IXMIN + ( IXMAX - IXMIN ) * ( X - XMIN ) / ( XMAX - XMIN )
+//    IX := min ( IX, max ( IXMIN, IXMAX ) )
+//    IX := max ( IX, min ( IXMIN, IXMAX ) )
+//
+//  Licensing:
+//
+//    This code is distributed under the GNU LGPL license.
+//
+//  Modified:
+//
+//    19 April 2014
+//
+//  Author:
+//
+//    John Burkardt
+//
+//  Parameters:
+//
+//    Input, double XMIN, XMAX, the real range.  XMAX and XMIN must not be
+//    equal.  It is not necessary that XMIN be less than XMAX.
+//
+//    Input, double X, the real number to be converted.
+//
+//    Input, int IXMIN, IXMAX, the allowed range of the output
+//    variable.  IXMAX corresponds to XMAX, and IXMIN to XMIN.
+//    It is not necessary that IXMIN be less than IXMAX.
+//
+//    Output, int R8_TO_I4, the value in the range [IXMIN,IXMAX] that
+//    corresponds to X.
+//
+{
+    int ix;
+    double temp;
+
+    /*
+    if ( xmax == xmin )
+    {
+    cerr << "\n";
+    cerr << "R8_TO_I4 - Fatal error!\n";
+    cerr << "  XMAX = XMIN, making a zero divisor.\n";
+    cerr << "  XMAX = " << xmax << "\n";
+    cerr << "  XMIN = " << xmin << "\n";
+    exit ( 1 );
+    }*/
+
+    temp =
+        ( ( xmax - x        ) * ( double ) ixmin
+        + (        x - xmin ) * ( double ) ixmax )
+        / ( xmax     - xmin );
+
+    if ( 0.0 <= temp )
+    {
+        temp = temp + 0.5;
+    }
+    else
+    {
+        temp = temp - 0.5;
+    }
+
+    ix = ( int ) temp;
+
+return ix;
+}
+
+//basado en: https://people.math.sc.edu/Burkardt/cpp_src/triangulation_svg/triangulation_svg.cpp
+void write_svg(std::string name, double *r, int *triangles, int pnumber, int tnumber, int i_mesh, int *mesh, int *seed, int num_region, int print_triangles){
+    int i,j;
+    int j4, j4_min, j4_max;
+    int i4, i4_max, i4_min;
+    double x_max, y_max, x_min, y_min, x_scale, y_scale;    
+
+    //Determinar escala
+    //busca máximos y min
+    for(i = 0; i < pnumber; i++){
+        //search range x
+        if(r[2*i + 0] > x_max )
+            x_max = r[2*i + 0];
+        if(r[2*i + 0] < x_min )
+            x_min = r[2*i + 0];
+        //search range y
+        if(r[2*i + 1] > y_max )
+            y_max = r[2*i + 1];
+        if(r[2*i + 1] < y_min )
+            y_min = r[2*i + 1];
+    }
+    
+    x_scale = x_max - x_min;
+    x_max = x_max + 0.05 * x_scale;
+    x_min = x_min - 0.05 * x_scale;
+    x_scale = x_max - x_min;
+    y_scale = y_max - y_min;
+    y_max = y_max + 0.05 * y_scale;
+    y_min = y_min - 0.05 * y_scale;
+    y_scale = y_max - y_min;
+
+    i4_min = 1;
+    j4_min = 1;
+
+    if ( x_scale < y_scale )
+    {
+        i4_max = ( int ) ( 0.5 + 500.0 * x_scale / y_scale );
+        j4_max = 500;
+    }
+    else
+    {
+        i4_max = 500;
+        j4_max = ( int ) ( 0.5 + 500.0 * y_scale / x_scale );
+    }
+    char cmd[1024] = "\0";
+    strcat(cmd, filespathoutput);
+    strcat(cmd, name.c_str());
+    strcat(cmd,".svg");
+    FILE *fptr;
+    fptr = fopen(cmd, "w");
+    if(fptr == NULL){
+        printf("Hmnito, no abrio el archivo :C\n");
+        perror("fopen");
+        exit(0);
+    }   
+    
+    //imprimir puntos
+    fprintf(fptr, "<svg width=\"%d\" height=\"%d\" viewbox=\"%d %d %d %d \" fill=\"white\">\n", i4_max, j4_max,  i4_min, j4_min, i4_max, j4_max);
+  //imprimir polginos
+    i = 0;
+    while(i < i_mesh){
+        int length_poly = mesh[i];
+        i++;
+        fprintf(fptr, "<polygon points=\"");
+        for(j=0; j < length_poly;j++){
+            i4 = r8_to_i4( x_min, x_max, r[0+mesh[i]*2], i4_min, i4_max);
+            j4 = r8_to_i4( y_max, y_min, r[1+mesh[i]*2], j4_min, j4_max);
+            fprintf(fptr, " %d %d", i4, j4);
+            i++;
+        }
+        fprintf(fptr, "\" stroke=\"black\" stroke-width=\"2\" />\n");
+    }
+    
+    fprintf(fptr,"</svg>\n");
+    fclose(fptr);
+
 }
 
 void write_metrics(std::string name, double *r, int *triangles, int pnumber, int tnumber, int i_mesh, int *mesh, int num_region, int num_border, int num_terminal_edges, int num_terminal_border_edges, int num_frontier_edges, int num_frontier_border_edges, int num_interior_edges, int t_delaunay, int t_label, int t_total, int t_travel_and_opt, int t_travel, int tcost_be, int num_BE, int est_total_be, int est_min_triangles_be, int est_max_triangles_be, int est_poly_with_be, double est_ratio_be)

@@ -1,6 +1,7 @@
 /* Prototipos de funciones para manejar entrada y salida de datos. */
 
 void write_geomview(std::string name, double *r, int *triangles, int pnumber, int tnumber, int i_mesh, int *mesh, int *seed, int num_region, int print_triangles);
+void write_svg(std::string name, double *r, int *triangles, int pnumber, int tnumber, int i_mesh, int *mesh, int *seed, int num_region, int print_triangles);
 void write_VEM(std::string name, double *r, int *triangles, int pnumber, int tnumber, int i_mesh, int *mesh, int *seed, int num_region, int print_triangles);
 void write_VEM_triangles(std::string name, double *r, int *triangles, int *adj, int pnumber, int tnumber, int i_mesh, int *mesh, int *seed, int num_region, std::list <int> &seed_bet);
 void write_triangulation(std::string name, double *r, int *triangles, int *adj, int pnumber, int tnumber);
