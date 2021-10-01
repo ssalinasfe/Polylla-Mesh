@@ -23,6 +23,8 @@ Calls to triangulation (needs two file in the same folder, .node and .ele)
 
 ```./DelaunayPolyGenerator [name of file].ele ```
 
+Files are stored in the directory [Executable folder]/output
+
 # Work in progress. TODO
 
   - [ ] Agregar que acepte cualquier input mientras que tengan un archivo .node. .ele, -neigh
