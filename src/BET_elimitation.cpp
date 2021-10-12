@@ -71,6 +71,7 @@ int Remove_BE3(int option, int *poly, int length_poly, int num_BE, int *triangle
             }else{ //caso raro, t2 no tiene adjacencia
                 triangle_list.push_back(t1);
                 seed_bet_mark[t1] = 1;
+                //std::cout << "super mega hiper error, bet t2 no tiene dos adjacencias, esta wea es imposible que pase"<<std::endl;
             }
         }
     }

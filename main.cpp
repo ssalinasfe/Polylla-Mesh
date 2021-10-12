@@ -99,7 +99,8 @@ int main(int argc, char* argv[]){
 
 	copy_delaunay_arrays(tnumber, r, triangles, adj);
 	free_detri2();
-
+	std::cout<<"terminao copiar data struct\n";
+	std::cout<<"Asociando a cada vértice un triangulo\n";
 	//Asociate each vertex to an adjacent  triangle
 	for(i = 0; i < pnumber; i++){
 		for (j = 0; j < tnumber; j++)
@@ -111,8 +112,8 @@ int main(int argc, char* argv[]){
 		}
 		//std::cout<<"trivertex["<<i<<"] "<<trivertex[i]<<std::endl;
 	}
-
-	num_border = get_border_points(pnumber,tnumber, border,triangles, adj, r);
+	std::cout<<"terminada asociacion\n";
+	//num_border = get_border_points(pnumber,tnumber, border,triangles, adj, r);
 	
 	//stats
 	int i_mesh = 0;	
@@ -122,7 +123,7 @@ int main(int argc, char* argv[]){
 	int est_max_triangles_be = 0;
 	int est_poly_with_be = 0;
 	double est_ratio_be = 0;
-	int tcost_be = 0;
+	unsigned int tcost_be = 0;
 	
 
 	//initialize array
