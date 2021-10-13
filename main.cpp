@@ -325,6 +325,8 @@ int main(int argc, char* argv[]){
 	std::cout<<" "<<t_label_no_frontier_edges;
     std::cout<<" "<<t_travel;
     std::cout<<" "<<tcost_be;
+	std::cout<<"\n";
+	
 	free(trivertex);
 	free(r);
 	free(triangles);
