@@ -28,7 +28,7 @@ TODO
 
 
 
-#include "delaunay.h"
+//#include "delaunay.h"
 #include "io.h"
 #include "consts.h"
 #include "triang.h"
@@ -77,42 +77,51 @@ int main(int argc, char* argv[]){
 	int *mesh;
 	int *trivertex;
 	
-	std::cout<<"Generando Delaunay"<<std::endl;
+	//std::cout<<"Generando Delaunay"<<std::endl;
 	auto tb_delaunay = std::chrono::high_resolution_clock::now();
-	generate_delaunay_from_random_points(argc, argv, pnumber,tnumber);
+	//generate_delaunay_from_random_points(argc, argv, pnumber,tnumber);
 	auto te_delaunay = std::chrono::high_resolution_clock::now();
-	std::cout<<"Generado Delaunay, copiando variables"<<std::endl;
+	//std::cout<<"Generado Delaunay, copiando variables"<<std::endl;
 /*
 	auto tb_voronoi = std::chrono::high_resolution_clock::now();
 	generate_constrained_vonoronoi();
 	auto te_voronoi = std::chrono::high_resolution_clock::now();
 */
-	r = (double *)malloc(2*pnumber*sizeof(double)); // cambiar por pnumber
-    triangles = (int *)malloc(3*tnumber*sizeof(int));
-	adj = (int *)malloc(3*tnumber*sizeof(int));
+	//r = (double *)malloc(2*pnumber*sizeof(double)); // cambiar por pnumber
+    //triangles = (int *)malloc(3*tnumber*sizeof(int));
+	//adj = (int *)malloc(3*tnumber*sizeof(int));
+
+
+	std::string name(argv[1]);
+	std::cout<<name<<std::endl;
+	std::cout<<"Copiando variables"<<std::endl;
+	read_from_triangle(name, pnumber, tnumber, r, triangles, adj, trivertex);
+
 	seed = (int *)malloc(tnumber*sizeof(int));
     max = (int *)malloc(tnumber*sizeof(int));
 	mesh = (int *)malloc(3*tnumber*sizeof(int));
-	trivertex = (int *)malloc(pnumber*sizeof(int));
+	//trivertex = (int *)malloc(pnumber*sizeof(int));
 
 	int *border = (int *)malloc(2*tnumber*sizeof(int));
 
-	copy_delaunay_arrays(tnumber, r, triangles, adj);
-	free_detri2();
-	std::cout<<"terminao copiar data struct\n";
-	std::cout<<"Asociando a cada vértice un triangulo\n";
-	//Asociate each vertex to an adjacent  triangle
-	for(i = 0; i < pnumber; i++){
-		for (j = 0; j < tnumber; j++)
-		{
-			if(i == triangles[3*j + 0] ||  i == triangles[3*j + 1] || i == triangles[3*j + 2]){
-				trivertex[i] = j;
-				break;
-			}
-		}
-		//std::cout<<"trivertex["<<i<<"] "<<trivertex[i]<<std::endl;
-	}
-	std::cout<<"terminada asociacion\n";
+
+
+	//copy_delaunay_arrays(tnumber, r, triangles, adj);
+	//free_detri2();
+	//std::cout<<"terminao copiar data struct\n";
+	//std::cout<<"Asociando a cada vértice un triangulo\n";
+	////Asociate each vertex to an adjacent  triangle
+	//for(i = 0; i < pnumber; i++){
+	//	for (j = 0; j < tnumber; j++)
+	//	{
+	//		if(i == triangles[3*j + 0] ||  i == triangles[3*j + 1] || i == triangles[3*j + 2]){
+	//			trivertex[i] = j;
+	//			break;
+	//		}
+	//	}
+	//	//std::cout<<"trivertex["<<i<<"] "<<trivertex[i]<<std::endl;
+	//}
+	//std::cout<<"terminada asociacion\n";
 	//num_border = get_border_points(pnumber,tnumber, border,triangles, adj, r);
 	
 	//stats
@@ -165,6 +174,7 @@ int main(int argc, char* argv[]){
 			}
 		}
 	}
+
 	auto te_label_seed = std::chrono::high_resolution_clock::now();
 	
 	/* Etapa 2: Desconectar arcos asociados a aristas nomáx-nomáx. */
@@ -280,9 +290,9 @@ int main(int argc, char* argv[]){
 
 	int num_region = count_regions(mesh,i_mesh);
 
-	std::string name(argv[argc-1]);
+	//std::string name(argv[argc-1]);
 	//name.erase(0,6);
-	name.erase(name.end()-5,name.end());
+	//name.erase(name.end()-5,name.end());
 
 	write_geomview(name, r, triangles, pnumber, tnumber, i_mesh, mesh, seed, num_region, print_triangles);
 	write_svg(name, r, triangles, pnumber, tnumber, i_mesh, mesh, seed, num_region, print_triangles);
@@ -307,8 +317,14 @@ int main(int argc, char* argv[]){
 	int t_label_no_frontier_edges = std::chrono::duration_cast<std::chrono::milliseconds>(te_label_no_frontier_edges - tb_label_no_frontier_edges).count();
 	std::cout<<"label phase "<<t_label<<" ( calculate max: "<<t_label_max_edge<<", label seed: "<<t_label_seed<<" label fe: "<<t_label_no_frontier_edges<<" )"<<std::endl;
 	int t_total = t_label + t_travel_and_opt;
-	write_metrics(name,r, triangles, pnumber, tnumber,i_mesh,  mesh,  num_region,  num_border,  num_terminal_edges,  num_terminal_border_edges,  num_frontier_edges,  num_frontier_border_edges,  num_interior_edges,  t_delaunay,  t_label,  t_total,  t_travel_and_opt,  t_travel, tcost_be, num_BE,  est_total_be,  est_min_triangles_be,  est_max_triangles_be,  est_poly_with_be, est_ratio_be);
-	
+	//write_metrics(name,r, triangles, pnumber, tnumber,i_mesh,  mesh,  num_region,  num_border,  num_terminal_edges,  num_terminal_border_edges,  num_frontier_edges,  num_frontier_border_edges,  num_interior_edges,  t_delaunay,  t_label,  t_total,  t_travel_and_opt,  t_travel, tcost_be, num_BE,  est_total_be,  est_min_triangles_be,  est_max_triangles_be,  est_poly_with_be, est_ratio_be);
+	std::cout<<" "<<t_total;
+    std::cout<<" "<<t_label;
+	std::cout<<" "<<t_label_max_edge;
+	std::cout<<" "<<t_label_seed;
+	std::cout<<" "<<t_label_no_frontier_edges;
+    std::cout<<" "<<t_travel;
+    std::cout<<" "<<tcost_be;
 	free(trivertex);
 	free(r);
 	free(triangles);
