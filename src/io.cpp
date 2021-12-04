@@ -36,17 +36,17 @@
 #define debug_msg(fmt) do { if (DEBUG_TEST) fprintf(stderr, "%s:%d:%s(): " fmt, __FILE__,  __LINE__, __func__); } while (0)
 
 
-void read_from_triangle(std::string name, int &pnumber, int &tnumber, double *&points, int *&triangles, int *&neigh, int *&trivertex){
+void read_from_triangle(std::string node_file, std::string ele_file, std::string neigh_file, int &pnumber, int &tnumber, double *&points, int *&triangles, int *&neigh, int *&trivertex){
     std::string line;
-    std::ifstream nodefile(name + ".node");
+    std::ifstream nodefile(node_file);
     double a1, a2, a3, a4;
     int i = 0;
     
-    //std::cout<<"Node file"<<std::endl;
+    std::cout<<"Node file"<<std::endl;
     if (nodefile.is_open())
     {
         nodefile >> pnumber ;
-        //std::cout<<pnumber<<std::endl;
+        std::cout<<pnumber<<std::endl;
 
         std::getline(nodefile, line); 
         points = (double *)malloc(2*pnumber*sizeof(double));
@@ -67,13 +67,15 @@ void read_from_triangle(std::string name, int &pnumber, int &tnumber, double *&p
     nodefile.close();
 
 
-    //std::cout<<"Ele file"<<std::endl;
-    std::ifstream elefile(name + ".ele");
+    trivertex =(int *)malloc(pnumber*sizeof(int));
+    std::cout<<"Ele file"<<std::endl;
+    std::ifstream elefile(ele_file);
     int t1, t2, t3, t4;
     i = 0;
     if(elefile.is_open()){
         elefile >> tnumber ;
         triangles = (int *)malloc(3*tnumber*sizeof(int));
+        
         std::getline(elefile, line); 
         while (elefile >> t1 >> t2 >> t3 >> t4 )
         {
@@ -81,6 +83,9 @@ void read_from_triangle(std::string name, int &pnumber, int &tnumber, double *&p
             triangles[3*i + 0] = t2;
             triangles[3*i + 1] = t3;
             triangles[3*i + 2] = t4;
+            trivertex[t2] = i;
+            trivertex[t3] = i;
+            trivertex[t4] = i;
             //std::cout<<triangles[3*i + 0]<<" "<<triangles[3*i + 1]<<" "<<triangles[3*i + 2]<<std::endl;
             i++;
         }
@@ -89,7 +94,7 @@ void read_from_triangle(std::string name, int &pnumber, int &tnumber, double *&p
     elefile.close();
 
     //std::cout<<"Neigh file"<<std::endl;
-    std::ifstream neighfile(name + ".neigh");
+    std::ifstream neighfile(neigh_file);
     i = 0;
     if(neighfile.is_open()){
         std::getline(neighfile, line); 
@@ -105,19 +110,19 @@ void read_from_triangle(std::string name, int &pnumber, int &tnumber, double *&p
     }else std::cout << "Unable to open neigh file";
     neighfile.close();
 
-    //std::cout<<"Neigh file"<<std::endl;
-    std::ifstream trivertexfile(name + ".trivertex");
-    i = 0;
-    if(trivertexfile.is_open()){
-        std::getline(trivertexfile, line); 
-        trivertex =(int *)malloc(pnumber*sizeof(int));
-        while (trivertexfile >> t1 >> t2)
-        {
-            trivertex[i] = t2;
-            i++;
-        }
-    }else std::cout << "Unable to open neigh file";
-    trivertexfile.close();
+    ////std::cout<<"Neigh file"<<std::endl;
+    //std::ifstream trivertexfile(name + ".trivertex");
+    //i = 0;
+    //if(trivertexfile.is_open()){
+    //    std::getline(trivertexfile, line); 
+    //    trivertex =(int *)malloc(pnumber*sizeof(int));
+    //    while (trivertexfile >> t1 >> t2)
+    //    {
+    //        trivertex[i] = t2;
+    //        i++;
+    //    }
+    //}else std::cout << "Unable to open neigh file";
+    //trivertexfile.close();
 }
 
 /*geomview output*/
@@ -125,9 +130,9 @@ void write_geomview(std::string name, double *r, int *triangles, int pnumber, in
 
     int i,j;
     char cmd[1024] = "\0";
-    strcat(cmd, filespathoutput);
     strcat(cmd, name.c_str());
     strcat(cmd,".off");
+    printf("Wiriting off file in %s\n", cmd);
     FILE *fptr;
     fptr = fopen(cmd, "w");
     if(fptr == NULL){
@@ -322,9 +327,9 @@ void write_svg(std::string name, double *r, int *triangles, int pnumber, int tnu
         j4_max = ( int ) ( 0.5 + 500.0 * y_scale / x_scale );
     }
     char cmd[1024] = "\0";
-    strcat(cmd, filespathoutput);
     strcat(cmd, name.c_str());
     strcat(cmd,".svg");
+    printf("Writting svg in %s\n", cmd);
     FILE *fptr;
     fptr = fopen(cmd, "w");
     if(fptr == NULL){
@@ -472,11 +477,10 @@ void write_metrics(std::string name, double *r, int *triangles, int pnumber, int
     avg_radius = avg_radius/num_region;
 	
     char cmd[1024] = "\0";
-    strcat(cmd, filespathoutput);
     strcat(cmd, name.c_str());
     //strcat(cmd, ppath);
     strcat(cmd,"_metrics.json");
-
+    printf("Writting metrics in %s\n",cmd);
     FILE *fptr;
     fptr = fopen(cmd, "w");
     if(fptr == NULL){

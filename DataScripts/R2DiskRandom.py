@@ -8,7 +8,6 @@
 
 import numpy
 import getopt, sys
-import pygalmesh
 import random
 
 def quatercircle2x2(num_P, h_O, tolerance):

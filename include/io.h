@@ -15,4 +15,4 @@ void write_GID(std::string name, double *r, int *triangles, int *adj, int pnumbe
 
 void write_metrics(std::string name, double *r, int *triangles, int pnumber, int tnumber, int i_mesh, int *mesh, int num_region, int num_border, int num_terminal_edges, int num_terminal_border_edges, int num_frontier_edges, int num_frontier_border_edges, int num_interior_edges, int t_delaunay, int t_label, int t_total, int t_travel_and_opt, int t_travel, unsigned int tcost_be, int num_BE, int est_total_be, int est_min_triangles_be, int est_max_triangles_be, int est_poly_with_be, double est_ratio_be);
 
-void read_from_triangle(std::string name, int &pnumber, int &tnumber, double *&points, int *&triangles, int *&neigh, int *&trivertex);
+void read_from_triangle(std::string node_file, std::string ele_file, std::string neigh_file, int &pnumber, int &tnumber, double *&points, int *&triangles, int *&neigh, int *&trivertex);
