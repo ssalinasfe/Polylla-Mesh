@@ -1,13 +1,9 @@
-<!--
 
-## OLD REPO: new simple version using POO and halfedges 
+## New simplest version using POO and halfedge data structure
 
-There is a new version of this mesh generator.
+There is a new version of this mesh generator to facilitate the integration with third party software.
 
 https://github.com/ssalinasfe/Polylla-Mesh-DCEL
-
-The version showen in this repository is experimental
- -->
 
 
 # POLYLLA: Polygonal meshing algorithm based on terminal-edge regions
