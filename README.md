@@ -27,7 +27,7 @@ Calls to file with points:
 ```./Polylla  <node file> <ele file> <neigh file> <output filename> ```
 
 
-The output of file is a ```<output filename>.off``` file, a ```<output filename>.svg``` file and a ```<output filename>.json``` file with the metrics of the mesh.
+The output is a ```<output filename>.off``` file, a ```<output filename>.svg``` file and a ```<output filename>.json``` file with the metrics of the mesh.
 
 # Input data generation
 
