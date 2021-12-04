@@ -60,6 +60,11 @@ int main(int argc, char* argv[]){
 	char* ppath;
 	int print_triangles = 1;
 
+	if (argc < 5){
+		std::cout<<"Usage "<<argv[0]<<" <node file> <ele file> <neigh file> <output name file>"<<std::endl;
+	}
+	
+
 	std::string node_file = std::string(argv[1]);
 	std::string ele_file = std::string(argv[2]);
 	std::string neigh_file = std::string(argv[3]);
