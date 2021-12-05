@@ -58,7 +58,7 @@ TODO
 int main(int argc, char* argv[]){
 
 	char* ppath;
-	int print_triangles = 1;
+	int print_triangles = 0;
 
 	if (argc < 5){
 		std::cout<<"Usage "<<argv[0]<<" <node file> <ele file> <neigh file> <output name file>"<<std::endl;

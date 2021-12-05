@@ -9,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
 
 
 #include <errno.h>
@@ -50,16 +51,14 @@ void read_from_triangle(std::string node_file, std::string ele_file, std::string
 
         std::getline(nodefile, line); 
         points = (double *)malloc(2*pnumber*sizeof(double));
-        while (nodefile >> a1 >> a2 >> a3 >> a4)
+        while (std::getline(nodefile, line))
         {
+            std::stringstream(line) >> std::ws >> a1 >> std::ws >> a2 >> std::ws >> a3;   
             points[2*i + 0] = a2;
             points[2*i + 1] = a3;
             //std::cout<<points[2*i + 0]<<" "<<points[2*i + 1]<<std::endl;
             i++;
-            //std::cout<<a2<<" "<<a3<<std::endl;
-            
-        }
-        
+        }        
     }
     else 
         std::cout << "Unable to open node file"; 
@@ -75,11 +74,10 @@ void read_from_triangle(std::string node_file, std::string ele_file, std::string
     if(elefile.is_open()){
         elefile >> tnumber ;
         triangles = (int *)malloc(3*tnumber*sizeof(int));
-        
         std::getline(elefile, line); 
-        while (elefile >> t1 >> t2 >> t3 >> t4 )
+        while (std::getline(elefile, line)) //ignora el resto de 
         {
-            //std::cout<<t2<<" "<<t3<<" "<<t4<<std::endl;
+            std::stringstream(line) >> t1 >> t2 >>t3>> t4;  
             triangles[3*i + 0] = t2;
             triangles[3*i + 1] = t3;
             triangles[3*i + 2] = t4;
@@ -89,6 +87,18 @@ void read_from_triangle(std::string node_file, std::string ele_file, std::string
             //std::cout<<triangles[3*i + 0]<<" "<<triangles[3*i + 1]<<" "<<triangles[3*i + 2]<<std::endl;
             i++;
         }
+        //while (elefile >> t1 >> t2 >> t3 >> t4 )
+        //{
+        //    //std::cout<<t2<<" "<<t3<<" "<<t4<<std::endl;
+        //    triangles[3*i + 0] = t2;
+        //    triangles[3*i + 1] = t3;
+        //    triangles[3*i + 2] = t4;
+        //    trivertex[t2] = i;
+        //    trivertex[t3] = i;
+        //    trivertex[t4] = i;
+        //    //std::cout<<triangles[3*i + 0]<<" "<<triangles[3*i + 1]<<" "<<triangles[3*i + 2]<<std::endl;
+        //    i++;
+        //}
     }else std::cout << "Unable to open ele file";
 
     elefile.close();
