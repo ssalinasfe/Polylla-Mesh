@@ -48,6 +48,7 @@ Following scripts to generate input files were made to test the algorithm using 
 # Work in progress. TODO
 
   - [X] Agregar que acepte cualquier input mientras que tengan un archivo .node. .ele, -neigh
+  - [ ] Cambiar stream de archivo por stream de string en la funcion read_from_triangle
   - [ ] Verificar la estructura de datos del input para que haya una correcta asociación de los triangulos y la adjacencia
   - [ ] Aceptar como input .node and .ele y generar la adjacencia en base a  eso.
   - [ ] Usar safe arrays en vez de array

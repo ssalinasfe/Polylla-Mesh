@@ -43,11 +43,11 @@ void read_from_triangle(std::string node_file, std::string ele_file, std::string
     double a1, a2, a3, a4;
     int i = 0;
     
-    std::cout<<"Node file"<<std::endl;
+    //std::cout<<"Node file"<<std::endl;
     if (nodefile.is_open())
     {
         nodefile >> pnumber ;
-        std::cout<<pnumber<<std::endl;
+        //std::cout<<pnumber<<std::endl;
 
         std::getline(nodefile, line); 
         points = (double *)malloc(2*pnumber*sizeof(double));
@@ -67,7 +67,7 @@ void read_from_triangle(std::string node_file, std::string ele_file, std::string
 
 
     trivertex =(int *)malloc(pnumber*sizeof(int));
-    std::cout<<"Ele file"<<std::endl;
+    //std::cout<<"Ele file"<<std::endl;
     std::ifstream elefile(ele_file);
     int t1, t2, t3, t4;
     i = 0;
@@ -75,9 +75,9 @@ void read_from_triangle(std::string node_file, std::string ele_file, std::string
         elefile >> tnumber ;
         triangles = (int *)malloc(3*tnumber*sizeof(int));
         std::getline(elefile, line); 
-        while (std::getline(elefile, line)) //ignora el resto de 
+        while (elefile >> t1 >> t2 >> t3 >> t4)
         {
-            std::stringstream(line) >> t1 >> t2 >>t3>> t4;  
+            //std::cout<<t2<<" "<<t3<<" "<<t4<<std::endl;
             triangles[3*i + 0] = t2;
             triangles[3*i + 1] = t3;
             triangles[3*i + 2] = t4;
@@ -86,19 +86,8 @@ void read_from_triangle(std::string node_file, std::string ele_file, std::string
             trivertex[t4] = i;
             //std::cout<<triangles[3*i + 0]<<" "<<triangles[3*i + 1]<<" "<<triangles[3*i + 2]<<std::endl;
             i++;
+            std::getline(elefile, line); 
         }
-        //while (elefile >> t1 >> t2 >> t3 >> t4 )
-        //{
-        //    //std::cout<<t2<<" "<<t3<<" "<<t4<<std::endl;
-        //    triangles[3*i + 0] = t2;
-        //    triangles[3*i + 1] = t3;
-        //    triangles[3*i + 2] = t4;
-        //    trivertex[t2] = i;
-        //    trivertex[t3] = i;
-        //    trivertex[t4] = i;
-        //    //std::cout<<triangles[3*i + 0]<<" "<<triangles[3*i + 1]<<" "<<triangles[3*i + 2]<<std::endl;
-        //    i++;
-        //}
     }else std::cout << "Unable to open ele file";
 
     elefile.close();
@@ -142,7 +131,7 @@ void write_geomview(std::string name, double *r, int *triangles, int pnumber, in
     char cmd[1024] = "\0";
     strcat(cmd, name.c_str());
     strcat(cmd,".off");
-    printf("Wiriting off file in %s\n", cmd);
+    //printf("Wiriting off file in %s\n", cmd);
     FILE *fptr;
     fptr = fopen(cmd, "w");
     if(fptr == NULL){

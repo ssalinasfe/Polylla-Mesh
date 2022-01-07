@@ -67,10 +67,14 @@
         "compare": "cpp",
         "concepts": "cpp",
         "ranges": "cpp",
-        "stop_token": "cpp"
+        "stop_token": "cpp",
+        "numbers": "cpp",
+        "__nullptr": "cpp"
     },
     "cmake.configureOnOpen": true,
     "cSpell.ignoreWords": [
         "trivertex"
-    ]
+    ],
+    "vscode-pets.petColor": "red",
+    "vscode-pets.position": "explorer"
 }

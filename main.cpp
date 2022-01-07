@@ -62,6 +62,7 @@ int main(int argc, char* argv[]){
 
 	if (argc < 5){
 		std::cout<<"Usage "<<argv[0]<<" <node file> <ele file> <neigh file> <output name file>"<<std::endl;
+		return EXIT_FAILURE;
 	}
 	
 
@@ -88,9 +89,9 @@ int main(int argc, char* argv[]){
 	int *trivertex;
 	
 	//std::cout<<"Generando Delaunay"<<std::endl;
-	auto tb_delaunay = std::chrono::high_resolution_clock::now();
-	//generate_delaunay_from_random_points(argc, argv, pnumber,tnumber);
-	auto te_delaunay = std::chrono::high_resolution_clock::now();
+	//auto tb_delaunay = std::chrono::high_resolution_clock::now();
+	////generate_delaunay_from_random_points(argc, argv, pnumber,tnumber);
+	//auto te_delaunay = std::chrono::high_resolution_clock::now();
 	//std::cout<<"Generado Delaunay, copiando variables"<<std::endl;
 /*
 	auto tb_voronoi = std::chrono::high_resolution_clock::now();
@@ -106,14 +107,14 @@ int main(int argc, char* argv[]){
 	//std::cout<<name<<std::endl;
 	//std::cout<<"Copiando variables"<<std::endl;
 	read_from_triangle(node_file, ele_file, neigh_file, pnumber, tnumber, r, triangles, adj, trivertex);
-	std::cout<<"Variables copiadas"<<std::endl;
+	//std::cout<<"Variables copiadas"<<std::endl;
 
 	seed = (int *)malloc(tnumber*sizeof(int));
     max = (int *)malloc(tnumber*sizeof(int));
 	mesh = (int *)malloc(3*tnumber*sizeof(int));
 	//trivertex = (int *)malloc(pnumber*sizeof(int));
 
-	int *border = (int *)malloc(2*tnumber*sizeof(int));
+	//int *border = (int *)malloc(2*tnumber*sizeof(int));
 
 
 
@@ -153,7 +154,7 @@ int main(int argc, char* argv[]){
 	
 	auto t1 = std::chrono::high_resolution_clock::now();
 	
-	std::cout<<"Etiquetando aristas máximas"<<std::endl;
+	//std::cout<<"Etiquetando aristas máximas"<<std::endl;
 	auto tb_label =std::chrono::high_resolution_clock::now();
 	/* Etapa 1: Encontrar aristas máximas. */
 
@@ -169,7 +170,7 @@ int main(int argc, char* argv[]){
 
 
 	auto tb_label_seed = std::chrono::high_resolution_clock::now();
-	std::cout<<"Etiquetando triangulos semilla"<<std::endl;
+	//std::cout<<"Etiquetando triangulos semilla"<<std::endl;
 		//Marcar triangulos semilla
 		for(i = 0; i < tnumber; i++){
 			for(j = 0; j < 3; j++){
@@ -193,7 +194,7 @@ int main(int argc, char* argv[]){
 	debug_msg("Etapa 2: Desconectar arcos asociados a aristas nomáx-nomáx. \n");
 
 	auto tb_label_no_count = std::chrono::high_resolution_clock::now();
-	std::cout<<"Generando datos estadisticos"<<std::endl;
+	//std::cout<<"Generando datos estadisticos"<<std::endl;
 	//data estadistica
 	int num_terminal_edges =0;
 	int num_terminal_border_edges=0;
@@ -226,7 +227,7 @@ int main(int argc, char* argv[]){
 	}
 
 
-	std::cout<<"Etiquetando frontier-edges"<<std::endl;
+	//std::cout<<"Etiquetando frontier-edges"<<std::endl;
 	auto te_label_no_count = std::chrono::high_resolution_clock::now();
 
 	auto tb_label_no_frontier_edges = std::chrono::high_resolution_clock::now();
@@ -255,7 +256,7 @@ int main(int argc, char* argv[]){
 	std::vector <int> seed_bet_mark(tnumber, 0);
 	
 	debug_msg("Etapa 5: Generar poligonos\n");
-	std::cout<<"Generando polygonos"<<std::endl;
+	//std::cout<<"Generando polygonos"<<std::endl;
 	int *poly = (int *)malloc(tnumber*sizeof(int));
 	//std::bitset<tnumber> tuhermana;
 	//std::chrono::time_point<std::chrono::system_clock> tsum_costbe, tb_be, te_be;
@@ -309,7 +310,7 @@ int main(int argc, char* argv[]){
 	//Cambiar name to output a todas las funciones
 	//antes 
 	write_geomview(output, r, triangles, pnumber, tnumber, i_mesh, mesh, seed, num_region, print_triangles);
-	write_svg(output, r, triangles, pnumber, tnumber, i_mesh, mesh, seed, num_region, print_triangles);
+	//write_svg(output, r, triangles, pnumber, tnumber, i_mesh, mesh, seed, num_region, print_triangles);
 	//write_alejandro(name, r, triangles, pnumber, tnumber, i_mesh, mesh, num_region);
 	//write_alejandro_quater_circle(name, r, triangles, pnumber, tnumber, i_mesh, mesh, num_region);
 	//write_alejandro_custom(name, r, triangles, pnumber, tnumber, i_mesh, mesh, num_region, border, num_border);
@@ -319,7 +320,7 @@ int main(int argc, char* argv[]){
 	//write_triangulation(name, r, triangles, adj, pnumber, tnumber);
 
 	//tcost_be = tcost_be/1000000;
-	int t_delaunay = std::chrono::duration_cast<std::chrono::milliseconds>(te_delaunay - tb_delaunay).count();
+	//int t_delaunay = std::chrono::duration_cast<std::chrono::milliseconds>(te_delaunay - tb_delaunay).count();
 	int t_label_no_count = std::chrono::duration_cast<std::chrono::milliseconds>(te_label_no_count - tb_label_no_count).count(); 
 	int t_label = std::chrono::duration_cast<std::chrono::milliseconds>(te_label - tb_label - (te_label_no_count - tb_label_no_count) ).count();
 	//int t_total = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() - t_label_no_count;
@@ -329,9 +330,10 @@ int main(int argc, char* argv[]){
 	int t_label_max_edge = std::chrono::duration_cast<std::chrono::milliseconds>(te_label_max_edge - tb_label_max_edge).count();
 	int t_label_seed = std::chrono::duration_cast<std::chrono::milliseconds>(te_label_seed - tb_label_seed).count();
 	int t_label_no_frontier_edges = std::chrono::duration_cast<std::chrono::milliseconds>(te_label_no_frontier_edges - tb_label_no_frontier_edges).count();
-	std::cout<<"label phase "<<t_label<<" ( calculate max: "<<t_label_max_edge<<", label seed: "<<t_label_seed<<" label fe: "<<t_label_no_frontier_edges<<" )"<<std::endl;
+	//std::cout<<"label phase "<<t_label<<" ( calculate max: "<<t_label_max_edge<<", label seed: "<<t_label_seed<<" label fe: "<<t_label_no_frontier_edges<<" )"<<std::endl;
 	int t_total = t_label + t_travel_and_opt;
-	write_metrics(output,r, triangles, pnumber, tnumber,i_mesh,  mesh,  num_region,  num_border,  num_terminal_edges,  num_terminal_border_edges,  num_frontier_edges,  num_frontier_border_edges,  num_interior_edges,  t_delaunay,  t_label,  t_total,  t_travel_and_opt,  t_travel, tcost_be, num_BE,  est_total_be,  est_min_triangles_be,  est_max_triangles_be,  est_poly_with_be, est_ratio_be);
+	//write_metrics(output,r, triangles, pnumber, tnumber,i_mesh,  mesh,  num_region,  num_border,  num_terminal_edges,  num_terminal_border_edges,  num_frontier_edges,  num_frontier_border_edges,  num_interior_edges,  0,  t_label,  t_total,  t_travel_and_opt,  t_travel, tcost_be, num_BE,  est_total_be,  est_min_triangles_be,  est_max_triangles_be,  est_poly_with_be, est_ratio_be);
+	std::cout<<pnumber<<" "<<tnumber<<" "<<num_region<<" "<<est_total_be;
 	std::cout<<" "<<t_total;
     std::cout<<" "<<t_label;
 	std::cout<<" "<<t_label_max_edge;
@@ -347,7 +349,7 @@ int main(int argc, char* argv[]){
 	free(adj);
 	free(seed);
 	free(mesh);    
-	free(border);
+	//free(border);
 	free(poly);
 	return EXIT_SUCCESS;
 }
