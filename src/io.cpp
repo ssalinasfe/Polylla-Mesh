@@ -204,7 +204,7 @@ void write_geomview(std::string name, double *r, int *triangles, int pnumber, in
     */
     fprintf(fptr,"\n");
     fclose(fptr);
-   // std::cout<<"Output saved in: "<<cmd<<std::endl;
+    std::cout<<"Output saved in: "<<cmd<<std::endl;
 }
 
 int r8_to_i4 ( double xmin, double xmax, double x, int ixmin, int ixmax )
@@ -371,6 +371,7 @@ void write_metrics(std::string name, double *r, int *triangles, int pnumber, int
 	est_min_edges = edges;
 	est_total_edges = edges;
 	i = 0;
+    /*
 	while(i < i_mesh){
         edges = mesh[i];
 		est_max_edges = edges > est_max_edges ? edges : est_max_edges;
@@ -385,9 +386,10 @@ void write_metrics(std::string name, double *r, int *triangles, int pnumber, int
             k = (j + 1)%edges;
             avg_edge_size += dist(r[2*poly[j]+0],r[2*poly[j]+1],r[2*poly[k]+0],r[2*poly[k]+1]);
         }
+        std::cout<<"i: "<<i<<" edges: "<<edges<<" i_mesh "<<i_mesh<<std::endl;
     }
     avg_edge_size = avg_edge_size/est_total_edges;
-
+    */
     double metrics[11];
 	double mesh_sparcing = 0.0;
 	i = 0;
@@ -401,7 +403,7 @@ void write_metrics(std::string name, double *r, int *triangles, int pnumber, int
     double min_pointDistance = DBL_MAX, max_pointDistance = 0;
     double min_radius = DBL_MAX, max_radius = 0, avg_radius = 0;
     double area, perimeter, apr,angle,edge, edgeratio, pointDistance, radius;
-
+    std::cout<<"3"<<std::endl;
 	while(i < i_mesh){
         length_poly = mesh[i];
         i++;
@@ -468,13 +470,13 @@ void write_metrics(std::string name, double *r, int *triangles, int pnumber, int
         if(radius > max_radius) max_radius = radius;
 
     }
-
+    std::cout<<"4"<<std::endl;
     mesh_sparcing = std::sqrt(avg_area/num_region);
     avg_area = avg_area/num_region;
     avg_perimeter = avg_perimeter/num_region;
     avg_edgeratio = avg_edgeratio/num_region;
     avg_radius = avg_radius/num_region;
-	
+    std::cout<<"5"<<std::endl;
     char cmd[1024] = "\0";
     strcat(cmd, name.c_str());
     //strcat(cmd, ppath);
@@ -525,8 +527,8 @@ void write_metrics(std::string name, double *r, int *triangles, int pnumber, int
     fprintf(fptr, "\"num_min_edges\": %d,\n", est_min_edges);
     fprintf(fptr, "\"num_edges_by_poly\": %.9f,\n", (float)est_total_edges/num_region);
     fprintf(fptr, "\"num_terminal_edges_no_border\": %d,\n", num_terminal_edges/2);
-    fprintf(fptr, "\"num_terminal_border_edges\": %d,\n", num_frontier_border_edges);
-    fprintf(fptr, "\"num_terminal_edges_total\": %d,\n", num_frontier_border_edges + num_terminal_edges/2);
+    fprintf(fptr, "\"num_terminal_border_edges\": %d,\n", num_terminal_border_edges);
+    fprintf(fptr, "\"num_terminal_edges_total\": %d,\n", num_terminal_border_edges + num_terminal_edges/2);
     fprintf(fptr, "\"num_frontier_edges_no_border\": %d,\n", num_frontier_edges/2);
     fprintf(fptr, "\"num_frontier_border_edges\": %d,\n", num_frontier_border_edges);
     fprintf(fptr, "\"num_frontier_edges\": %d,\n", num_frontier_edges/2 + num_frontier_border_edges);

@@ -135,7 +135,7 @@ int main(int argc, char* argv[]){
 	//}
 	//std::cout<<"terminada asociacion\n";
 	//num_border = get_border_points(pnumber,tnumber, border,triangles, adj, r);
-	
+	num_border = 0;
 	//stats
 	int i_mesh = 0;	
 	int num_BE = 0;
@@ -144,7 +144,7 @@ int main(int argc, char* argv[]){
 	int est_max_triangles_be = 0;
 	int est_poly_with_be = 0;
 	double est_ratio_be = 0;
-	unsigned int tcost_be = 0;
+	unsigned long long int tcost_be = 0;
 	
 
 	//initialize array
@@ -289,7 +289,7 @@ int main(int argc, char* argv[]){
 				//i_mesh = Remove_BE2(1,poly, length_poly, num_BE, triangles, adj, r, tnumber, mesh, i_mesh, trivertex, seed_bet);
 				//i_mesh = Remove_BE(1,poly, length_poly, num_BE, triangles, adj, r, tnumber, mesh, i_mesh, trivertex);
 				auto te_be = std::chrono::high_resolution_clock::now();
-				tcost_be += std::chrono::duration_cast<std::chrono::milliseconds>( te_be - tb_be ).count();
+				tcost_be += std::chrono::duration_cast<std::chrono::nanoseconds>( te_be - tb_be ).count();
 				//i_mesh = save_to_mesh(mesh, poly, i_mesh, length_poly, r);	
 			}else{
 				debug_msg("Guardando poly\n");
@@ -302,13 +302,10 @@ int main(int argc, char* argv[]){
 	auto t2 = std::chrono::high_resolution_clock::now();
 
 	int num_region = count_regions(mesh,i_mesh);
+	std::cout<<"Regions: "<<num_region<<" "<<i_mesh<<std::endl;
 
-	//std::string name(argv[argc-1]);
-	//name.erase(0,6);
-	//name.erase(name.end()-5,name.end());
 
 	//Cambiar name to output a todas las funciones
-	//antes 
 	write_geomview(output, r, triangles, pnumber, tnumber, i_mesh, mesh, seed, num_region, print_triangles);
 	//write_svg(output, r, triangles, pnumber, tnumber, i_mesh, mesh, seed, num_region, print_triangles);
 	//write_alejandro(name, r, triangles, pnumber, tnumber, i_mesh, mesh, num_region);
@@ -319,21 +316,21 @@ int main(int argc, char* argv[]){
 	//write_GID(name, r, triangles, adj, pnumber, tnumber);
 	//write_triangulation(name, r, triangles, adj, pnumber, tnumber);
 
-	//tcost_be = tcost_be/1000000;
+	tcost_be = tcost_be/1000000;
 	//int t_delaunay = std::chrono::duration_cast<std::chrono::milliseconds>(te_delaunay - tb_delaunay).count();
 	int t_label_no_count = std::chrono::duration_cast<std::chrono::milliseconds>(te_label_no_count - tb_label_no_count).count(); 
 	int t_label = std::chrono::duration_cast<std::chrono::milliseconds>(te_label - tb_label - (te_label_no_count - tb_label_no_count) ).count();
 	//int t_total = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() - t_label_no_count;
 	int t_travel_and_opt = std::chrono::duration_cast<std::chrono::milliseconds>(te_travel - tb_travel).count();
 	int t_travel = std::chrono::duration_cast<std::chrono::milliseconds>(te_travel - tb_travel ).count() - tcost_be; 
-	
+
 	int t_label_max_edge = std::chrono::duration_cast<std::chrono::milliseconds>(te_label_max_edge - tb_label_max_edge).count();
 	int t_label_seed = std::chrono::duration_cast<std::chrono::milliseconds>(te_label_seed - tb_label_seed).count();
 	int t_label_no_frontier_edges = std::chrono::duration_cast<std::chrono::milliseconds>(te_label_no_frontier_edges - tb_label_no_frontier_edges).count();
 	//std::cout<<"label phase "<<t_label<<" ( calculate max: "<<t_label_max_edge<<", label seed: "<<t_label_seed<<" label fe: "<<t_label_no_frontier_edges<<" )"<<std::endl;
 	int t_total = t_label + t_travel_and_opt;
 	//write_metrics(output,r, triangles, pnumber, tnumber,i_mesh,  mesh,  num_region,  num_border,  num_terminal_edges,  num_terminal_border_edges,  num_frontier_edges,  num_frontier_border_edges,  num_interior_edges,  0,  t_label,  t_total,  t_travel_and_opt,  t_travel, tcost_be, num_BE,  est_total_be,  est_min_triangles_be,  est_max_triangles_be,  est_poly_with_be, est_ratio_be);
-	std::cout<<pnumber<<" "<<tnumber<<" "<<num_region<<" "<<est_total_be;
+	std::cout<<pnumber<<" "<<tnumber<<" "<<num_region<<" "<<num_terminal_edges/2 + num_terminal_border_edges<<" "<<est_total_be;
 	std::cout<<" "<<t_total;
     std::cout<<" "<<t_label;
 	std::cout<<" "<<t_label_max_edge;
@@ -343,13 +340,14 @@ int main(int argc, char* argv[]){
     std::cout<<" "<<tcost_be;
 	std::cout<<"\n";
 	
+	std::cout<<"Generated mesh with "<<pnumber<<" points and "<<num_region<<" Polygons and "<< num_frontier_edges/2 + num_frontier_border_edges + num_terminal_border_edges<<" edges"<<std::endl;
+
 	free(trivertex);
 	free(r);
 	free(triangles);
 	free(adj);
 	free(seed);
 	free(mesh);    
-	//free(border);
 	free(poly);
 	return EXIT_SUCCESS;
 }
